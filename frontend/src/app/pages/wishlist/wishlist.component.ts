@@ -28,7 +28,7 @@ import { WishlistItem } from '../../models/ecommerce.model';
             <span class="category-tag">{{ item.product.category?.name }}</span>
             <a [routerLink]="['/product', item.productId]" class="product-name font-serif">{{ item.product.name }}</a>
             <div class="product-price font-serif">
-              \${{ item.product.salePrice || item.product.price }}
+              ₹{{ item.product.salePrice || item.product.price }}
             </div>
             <a [routerLink]="['/product', item.productId]" class="luxury-btn-primary add-bag-btn">
               VIEW & SELECT SIZE

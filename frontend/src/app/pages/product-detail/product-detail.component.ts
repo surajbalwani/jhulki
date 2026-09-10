@@ -40,8 +40,8 @@ import { Product } from '../../models/ecommerce.model';
           <h1 class="product-title font-serif">{{ product()?.name }}</h1>
 
           <div class="price-bar">
-            <span class="price font-serif">\${{ product()?.salePrice || product()?.price }}</span>
-            <span class="old-price" *ngIf="product()?.salePrice">\${{ product()?.price }}</span>
+            <span class="price font-serif">₹{{ product()?.salePrice || product()?.price }}</span>
+            <span class="old-price" *ngIf="product()?.salePrice">₹{{ product()?.price }}</span>
           </div>
 
           <p class="description">{{ product()?.description }}</p>

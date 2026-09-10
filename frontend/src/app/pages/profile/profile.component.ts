@@ -70,13 +70,13 @@ import { Address, Order } from '../../models/ecommerce.model';
                     <span class="item-name font-serif">{{ item.product.name }}</span>
                     <span class="item-spec">Size: {{ item.size }} | Qty: {{ item.quantity }}</span>
                   </div>
-                  <span class="item-price font-serif">\${{ item.price * item.quantity }}</span>
+                  <span class="item-price font-serif">₹{{ item.price * item.quantity }}</span>
                 </div>
               </div>
 
               <div class="order-footer mt-3">
                 <span>Total Amount Paid:</span>
-                <span class="order-total font-serif">\${{ order.totalAmount }}</span>
+                <span class="order-total font-serif">₹{{ order.totalAmount }}</span>
               </div>
             </div>
 

@@ -26,7 +26,7 @@ import { Address } from '../../models/ecommerce.model';
               <span class="category">{{ item.product.category?.name }}</span>
               <h3 class="name font-serif">{{ item.product.name }}</h3>
               <p class="size-info">Selected Size: <strong>{{ item.size }}</strong></p>
-              <div class="price font-serif">\${{ item.product.salePrice || item.product.price }}</div>
+              <div class="price font-serif">₹{{ item.product.salePrice || item.product.price }}</div>
             </div>
 
             <div class="item-qty">
@@ -45,7 +45,7 @@ import { Address } from '../../models/ecommerce.model';
 
           <div class="summary-row">
             <span>Subtotal</span>
-            <span class="font-serif">\${{ calculateSubtotal() }}</span>
+            <span class="font-serif">₹{{ calculateSubtotal() }}</span>
           </div>
 
           <div class="summary-row">
@@ -55,7 +55,7 @@ import { Address } from '../../models/ecommerce.model';
 
           <div class="summary-row total-row">
             <span>Estimated Total</span>
-            <span class="total-price font-serif">\${{ calculateSubtotal() }}</span>
+            <span class="total-price font-serif">₹{{ calculateSubtotal() }}</span>
           </div>
 
           <!-- Address Picker for Checkout -->

@@ -62,8 +62,8 @@ import { Product } from '../../models/ecommerce.model';
             <span class="category-tag">{{ product.category?.name || 'HAUTE COUTURE' }}</span>
             <a [routerLink]="['/product', product.id]" class="product-name font-serif">{{ product.name }}</a>
             <div class="product-price">
-              <span class="current-price font-serif">\${{ product.salePrice || product.price }}</span>
-              <span class="old-price" *ngIf="product.salePrice">\${{ product.price }}</span>
+              <span class="current-price font-serif">₹{{ product.salePrice || product.price }}</span>
+              <span class="old-price" *ngIf="product.salePrice">₹{{ product.price }}</span>
             </div>
             <a [routerLink]="['/product', product.id]" class="view-details-btn">
               VIEW DETAILS

@@ -12,7 +12,7 @@ import { EcommerceService } from '../../../services/ecommerce.service';
   template: `
     <!-- Top Bar Notice -->
     <div class="luxury-topbar">
-      <span>COMPLIMENTARY WORLDWIDE EXPRESS SHIPPING ON ORDERS OVER $500</span>
+      <span>COMPLIMENTARY WORLDWIDE EXPRESS SHIPPING ON ORDERS OVER ₹5,000</span>
     </div>
 
     <!-- Main Navigation Bar -->

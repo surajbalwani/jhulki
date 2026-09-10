@@ -27,7 +27,7 @@ import { Product } from '../../models/ecommerce.model';
       <div class="stats-grid mt-4" *ngIf="metrics()">
         <div class="stat-card glass-card">
           <span class="stat-title">TOTAL REVENUE</span>
-          <span class="stat-value font-serif gold-text">\${{ metrics()?.totalRevenue | number:'1.2-2' }}</span>
+          <span class="stat-value font-serif gold-text">₹{{ metrics()?.totalRevenue | number:'1.2-2' }}</span>
         </div>
         <div class="stat-card glass-card">
           <span class="stat-title">HAUTE PRODUCTS</span>
@@ -72,7 +72,7 @@ import { Product } from '../../models/ecommerce.model';
                   </div>
                 </td>
                 <td><span class="cat-pill">{{ product.category?.name }}</span></td>
-                <td class="font-serif gold-text">\${{ product.salePrice || product.price }}</td>
+                <td class="font-serif gold-text">₹{{ product.salePrice || product.price }}</td>
                 <td>
                   <div class="stock-chips">
                     <span *ngFor="let s of product.stock" class="chip">
@@ -134,12 +134,12 @@ import { Product } from '../../models/ecommerce.model';
 
             <div class="form-row mt-3">
               <div class="form-group">
-                <label>Regular Price ($)</label>
+                <label>Regular Price (₹)</label>
                 <input type="number" [(ngModel)]="formData.price" name="price" step="0.01" required />
               </div>
 
               <div class="form-group">
-                <label>Sale Price ($ optional)</label>
+                <label>Sale Price (₹ optional)</label>
                 <input type="number" [(ngModel)]="formData.salePrice" name="salePrice" step="0.01" />
               </div>
             </div>

@@ -56,7 +56,7 @@ async function main() {
       name: 'Midnight Silk Tuxedo Suit',
       slug: 'midnight-silk-tuxedo-suit',
       description: 'Crafted from 100% pure Mulberry silk with hand-stitched satin lapels. Designed for grand galas and high-profile evenings.',
-      price: 2450.00,
+      price: 184500.00,
       images: [
         'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=1000',
         'https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=1000'
@@ -73,8 +73,8 @@ async function main() {
       name: 'Aurelia Gold Embroided Evening Gown',
       slug: 'aurelia-gold-embroided-gown',
       description: 'An ethereal floor-length gown woven with 24k gold metallic threads and a sculpted corset bodice.',
-      price: 3890.00,
-      salePrice: 3400.00,
+      price: 289000.00,
+      salePrice: 240000.00,
       images: [
         'https://images.unsplash.com/photo-1566174053879-31528523f8ae?q=80&w=1000',
         'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000'
@@ -92,7 +92,7 @@ async function main() {
       name: 'Cashmere Double-Breasted Trench Coat',
       slug: 'cashmere-double-breasted-trench',
       description: 'Soft virgin cashmere tailored in Florence with horn buttons and a waist cinching belt.',
-      price: 1850.00,
+      price: 145000.00,
       images: [
         'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=1000',
         'https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?q=80&w=1000'
@@ -109,7 +109,7 @@ async function main() {
       name: 'Monogram Leather Duffle Bag',
       slug: 'monogram-leather-duffle-bag',
       description: 'Full-grain Tuscan calfskin duffle with palladium gold hardware and personalized monogram tag.',
-      price: 1290.00,
+      price: 98000.00,
       images: [
         'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1000',
         'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=1000'
@@ -124,7 +124,7 @@ async function main() {
       name: 'Royal Velvet Embroidered Loafers',
       slug: 'royal-velvet-embroidered-loafers',
       description: 'Handcrafted velvet slippers with gold bullion crest emblem and cushioned leather lining.',
-      price: 790.00,
+      price: 59000.00,
       images: [
         'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?q=80&w=1000'
       ],
