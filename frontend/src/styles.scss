@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  
+  --color-bg-dark: #0a0a0c;
+  --color-bg-surface: #121216;
+  --color-bg-card: #18181f;
+  --color-bg-glass: rgba(24, 24, 31, 0.75);
+  
+  --color-gold-primary: #d4af37;
+  --color-gold-light: #f3e5ab;
+  --color-gold-dark: #aa820a;
+  
+  --color-text-main: #f5f5f7;
+  --color-text-muted: #9a9ab0;
+  --color-text-gold: #e6ca65;
+  
+  --color-border-subtle: rgba(212, 175, 55, 0.15);
+  --color-border-glow: rgba(212, 175, 55, 0.4);
+  
+  --box-shadow-luxury: 0 10px 35px -5px rgba(0, 0, 0, 0.7), 0 0 20px rgba(212, 175, 55, 0.08);
+  --transition-smooth: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-main);
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, .font-serif {
+  font-family: var(--font-serif);
+  letter-spacing: 0.03em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: var(--font-sans);
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: none;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0c;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a35;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-primary);
+}
+
+/* Utility Animations & Styling */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #fff 0%, var(--color-gold-light) 40%, var(--color-gold-primary) 70%, var(--color-gold-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.luxury-btn-primary {
+  background: linear-gradient(135deg, #d4af37, #aa820a);
+  color: #050507;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  padding: 12px 28px;
+  border-radius: 2px;
+  transition: var(--transition-smooth);
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.luxury-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+  background: linear-gradient(135deg, #f3e5ab, #d4af37);
+}
+
+.luxury-btn-outline {
+  border: 1px solid var(--color-gold-primary);
+  color: var(--color-gold-light);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  padding: 11px 26px;
+  border-radius: 2px;
+  transition: var(--transition-smooth);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.luxury-btn-outline:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--color-gold-light);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.glass-card {
+  background: var(--color-bg-glass);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 4px;
+}
+
+.badge-gold {
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid var(--color-gold-primary);
+  color: var(--color-gold-light);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding: 3px 8px;
+  border-radius: 2px;
+  font-weight: 600;
+}
