@@ -41,27 +41,27 @@ import { Alert } from '../../utils/alert.utils';
           <h2 class="title font-serif">Curated Masterpieces</h2>
         </div>
         <div class="categories-container">
-          <a routerLink="/products" [queryParams]="{category: 'men'}" class="category-card">
-            <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=800" alt="Men's Collection">
+          <a routerLink="/products" [queryParams]="{category: 'kurta'}" class="category-card">
+            <img src="/images/cat-men-ethnic.jpg" alt="Men's Ethnic & Kurta Wear">
             <div class="card-overlay">
-              <span class="cat-subtitle">ATELIER</span>
-              <h3 class="cat-title">Men's Suits & Outerwear</h3>
+              <span class="cat-subtitle">ATELIER ETHNIC</span>
+              <h3 class="cat-title">Men's Ethnic & Kurta Wear</h3>
             </div>
           </a>
 
-          <a routerLink="/products" [queryParams]="{category: 'women'}" class="category-card">
-            <img src="https://images.unsplash.com/photo-1566174053879-31528523f8ae?q=80&w=800" alt="Women's Evening Gowns">
+          <a routerLink="/products" [queryParams]="{category: 'chaniya-choli'}" class="category-card">
+            <img src="/images/cat-women-chaniya-choli.jpg" alt="Royal Chaniya Choli Couture">
             <div class="card-overlay">
-              <span class="cat-subtitle">HAUTE COUTURE</span>
-              <h3 class="cat-title">Women's Evening Wear</h3>
+              <span class="cat-subtitle">NAVRATRI SPECIAL</span>
+              <h3 class="cat-title">Royal Chaniya Choli Couture</h3>
             </div>
           </a>
 
           <a routerLink="/products" [queryParams]="{category: 'accessories'}" class="category-card">
-            <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=800" alt="Leather Accessories">
+            <img src="/images/cat-oxidized-jhumka.jpg" alt="Oxidized Jhumka & Accessories">
             <div class="card-overlay">
-              <span class="cat-subtitle">LEATHER GOODS</span>
-              <h3 class="cat-title">Fine Accessories & Bags</h3>
+              <span class="cat-subtitle">HERITAGE JEWELRY</span>
+              <h3 class="cat-title">Accessories</h3>
             </div>
           </a>
         </div>
