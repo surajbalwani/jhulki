@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://jhulki-backend.vercel.app/api/$1"
+    }
+  ]
+}
