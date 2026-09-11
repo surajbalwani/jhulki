@@ -7,11 +7,18 @@ import { User } from '../models/ecommerce.model';
 export function getApiUrl(): string {
   if (typeof window !== 'undefined') {
     const saved = localStorage.getItem('jhulki_api_url');
-    if (saved) return saved.endsWith('/') ? saved.slice(0, -1) : saved;
+    if (saved) {
+      const clean = saved.endsWith('/') ? saved.slice(0, -1) : saved;
+      if (!clean.includes('jhulki.vercel.app')) {
+        return clean;
+      } else {
+        localStorage.removeItem('jhulki_api_url');
+      }
+    }
 
     if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-      // In live Vercel production, return relative /api so frontend vercel.json proxies seamlessly to backend
-      return window.location.origin + '/api';
+      // Point directly to live Next.js Vercel API backend
+      return 'https://jhulki-backend.vercel.app/api';
     }
   }
   return 'http://localhost:5292/api';
