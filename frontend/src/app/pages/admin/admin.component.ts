@@ -18,13 +18,30 @@ import { Product } from '../../models/ecommerce.model';
           <h1 class="font-serif page-title">Atelier Admin Control</h1>
         </div>
 
-        <button (click)="openAddProductModal()" class="luxury-btn-primary">
-          + ADD NEW LUXURY PRODUCT
-        </button>
+        <div class="admin-header-actions">
+          <!-- BOGO Master Promotion Switch with Hover Edit -->
+          <div class="bogo-header-toggle-wrap">
+            <div class="bogo-toggle-info">
+              <span class="bogo-toggle-title">
+                BOGO OFFER
+                <a (click)="openBogoModal()" class="bogo-edit-hover-link" title="Click to select BOGO eligible products">Edit</a>
+              </span>
+              <span class="bogo-toggle-sub">{{ isAnyBogoActive() ? 'OFFER ACTIVE' : 'OFFER OFF' }}</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" [checked]="isAnyBogoActive()" (change)="toggleAllBogo($event)" />
+              <span class="slider round"></span>
+            </label>
+          </div>
+
+          <button (click)="openAddProductModal()" class="luxury-btn-primary">
+            + ADD PRODUCT
+          </button>
+        </div>
       </div>
 
       <!-- Dashboard Telemetry Stats -->
-      <div class="stats-grid mt-4" *ngIf="metrics()">
+      <div class="stats-grid mt-5 mb-5" *ngIf="metrics()">
         <div class="stat-card glass-card">
           <span class="stat-title">TOTAL REVENUE</span>
           <span class="stat-value font-serif gold-text">₹{{ metrics()?.totalRevenue | number:'1.2-2' }}</span>
@@ -72,7 +89,13 @@ import { Product } from '../../models/ecommerce.model';
                   </div>
                 </td>
                 <td><span class="cat-pill">{{ product.category?.name }}</span></td>
-                <td class="font-serif gold-text">₹{{ product.salePrice || product.price }}</td>
+                <td class="font-serif">
+                  <span class="gold-text">₹{{ ecommerceService.getEffectivePrice(product) }}</span>
+                  <span *ngIf="product.salePrice" class="old-price ml-2" style="font-size:0.75rem; text-decoration:line-through; color:#666;">₹{{ product.price }}</span>
+                  <div *ngIf="ecommerceService.isSaleActive(product)" class="gold-text" style="font-size:0.6rem; letter-spacing:0.1em; margin-top:2px;">
+                    ⚡ TIMER SALE ACTIVE
+                  </div>
+                </td>
                 <td>
                   <div class="stock-chips">
                     <span *ngFor="let s of product.stock" class="chip">
@@ -81,9 +104,14 @@ import { Product } from '../../models/ecommerce.model';
                   </div>
                 </td>
                 <td>
-                  <span class="badge" [class.badge-gold]="product.isFeatured">
-                    {{ product.isFeatured ? 'YES' : 'NO' }}
-                  </span>
+                  <div style="display:flex; flex-direction:column; gap:4px;">
+                    <span class="badge" [class.badge-gold]="product.isFeatured">
+                      {{ product.isFeatured ? 'FEATURED' : 'REGULAR' }}
+                    </span>
+                    <span *ngIf="product.isBogoEnabled" class="bogo-chip" style="font-size:0.55rem; width:fit-content;">
+                      🎁 BOGO ACTIVE
+                    </span>
+                  </div>
                 </td>
                 <td>
                   <div class="action-btns">
@@ -120,9 +148,13 @@ import { Product } from '../../models/ecommerce.model';
                 <label>Category</label>
                 <select [(ngModel)]="formData.categorySlug" name="categorySlug" required>
                   <option value="men">Men</option>
+                  <option value="kurta">Kurta & Sherwanis</option>
                   <option value="women">Women</option>
+                  <option value="chaniya-choli">Chaniya Choli</option>
+                  <option value="blouse">Blouse & Corsets</option>
                   <option value="accessories">Accessories</option>
-                  <option value="footwear">Footwear</option>
+                  <option value="kids">Kids</option>
+                  <option value="couple">Couple</option>
                 </select>
               </div>
             </div>
@@ -132,15 +164,44 @@ import { Product } from '../../models/ecommerce.model';
               <textarea [(ngModel)]="formData.description" name="description" rows="3" required></textarea>
             </div>
 
-            <div class="form-row mt-3">
-              <div class="form-group">
-                <label>Regular Price (₹)</label>
-                <input type="number" [(ngModel)]="formData.price" name="price" step="0.01" required />
+            <div class="form-group mt-3">
+              <label>Regular Price (₹)</label>
+              <input type="number" [(ngModel)]="formData.price" name="price" step="0.01" (input)="updateSalePriceFromDiscount()" required />
+            </div>
+
+            <!-- Sale Toggle Switch & Configurations -->
+            <div class="toggle-card glass-card mt-3">
+              <div class="toggle-header">
+                <div class="toggle-label-wrap">
+                  <span class="toggle-title">SALE PROMOTION</span>
+                  <span class="toggle-desc">Enable timed discount percentage and automated countdown timer</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" [(ngModel)]="formData.isSaleEnabled" name="isSaleEnabled" (change)="onSaleToggleChange()" />
+                  <span class="slider round"></span>
+                </label>
               </div>
 
-              <div class="form-group">
-                <label>Sale Price (₹ optional)</label>
-                <input type="number" [(ngModel)]="formData.salePrice" name="salePrice" step="0.01" />
+              <div class="toggle-content mt-3" *ngIf="formData.isSaleEnabled">
+                <div class="form-group">
+                  <label>Sale Discount (% optional)</label>
+                  <input type="number" [(ngModel)]="discountPercentage" name="discountPercentage" placeholder="e.g. 15 for 15% OFF" min="0" max="99" (input)="updateSalePriceFromDiscount()" />
+                  <span *ngIf="formData.salePrice && formData.price > 0" class="gold-text" style="font-size:0.65rem; display:block; margin-top:2px;">
+                    Calculated Sale Price: ₹{{ formData.salePrice | number:'1.2-2' }}
+                  </span>
+                </div>
+
+                <div class="form-row mt-3">
+                  <div class="form-group">
+                    <label>Automated Sale Start Time</label>
+                    <input type="datetime-local" [(ngModel)]="formData.saleStartTime" name="saleStartTime" />
+                  </div>
+
+                  <div class="form-group">
+                    <label>Automated Sale End Time</label>
+                    <input type="datetime-local" [(ngModel)]="formData.saleEndTime" name="saleEndTime" />
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -178,6 +239,44 @@ import { Product } from '../../models/ecommerce.model';
           </form>
         </div>
       </div>
+
+      <!-- BOGO Selection Popup Modal -->
+      <div class="modal-backdrop" *ngIf="showBogoModal()">
+        <div class="modal-card glass-card bogo-popup-card">
+          <div class="modal-header">
+            <div>
+              <h3 class="font-serif">BOGO Promotion Settings</h3>
+              <span class="subtitle">Turn ON/OFF BOGO offer instantly for each product</span>
+            </div>
+            <button (click)="showBogoModal.set(false)" class="close-btn">&times;</button>
+          </div>
+
+          <div class="bogo-products-list mt-4">
+            <div *ngFor="let p of products()" class="bogo-item-row glass-card">
+              <img [src]="p.images[0]" [alt]="p.name" class="bogo-item-img" />
+              <div class="bogo-item-info">
+                <span class="p-name font-serif">{{ p.name }}</span>
+                <span class="gold-text font-serif">₹{{ p.price }}</span>
+              </div>
+              <div class="bogo-item-toggle">
+                <label class="switch">
+                  <input type="checkbox" [checked]="p.isBogoEnabled" (change)="toggleProductBogo(p, $event)" />
+                  <span class="slider round"></span>
+                </label>
+                <span class="bogo-status-text" [class.gold-text]="p.isBogoEnabled">
+                  {{ p.isBogoEnabled ? 'BOGO ON' : 'OFF' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-actions mt-4">
+            <button type="button" (click)="showBogoModal.set(false)" class="luxury-btn-primary">
+              DONE
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   `,
   styles: [`
@@ -191,6 +290,112 @@ import { Product } from '../../models/ecommerce.model';
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
+      margin-bottom: 40px;
+    }
+
+    .admin-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .bogo-header-toggle-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--color-border-glow);
+      padding: 10px 18px;
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .bogo-toggle-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bogo-toggle-title {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      color: #fff;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bogo-edit-hover-link {
+      font-size: 0.65rem;
+      color: var(--color-gold-primary);
+      text-decoration: underline;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition-smooth);
+    }
+
+    .bogo-header-toggle-wrap:hover .bogo-edit-hover-link {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .bogo-toggle-sub {
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      color: var(--color-gold-light);
+    }
+
+    /* BOGO Popup List */
+    .bogo-popup-card {
+      max-width: 550px !important;
+    }
+
+    .bogo-products-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    .bogo-item-row {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      gap: 16px;
+    }
+
+    .bogo-item-img {
+      width: 48px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .bogo-item-info {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .bogo-item-info .p-name {
+      font-size: 0.95rem;
+      color: #fff;
+    }
+
+    .bogo-item-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bogo-status-text {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: #888;
+      width: 55px;
     }
 
     .page-title {
@@ -203,6 +408,8 @@ import { Product } from '../../models/ecommerce.model';
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 20px;
+      margin-top: 40px;
+      margin-bottom: 50px;
     }
 
     .stat-card {
@@ -377,6 +584,91 @@ import { Product } from '../../models/ecommerce.model';
       border-radius: 4px;
       font-size: 0.85rem;
       outline: none;
+      transition: var(--transition-smooth);
+    }
+
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--color-gold-primary);
+      box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
+    }
+
+    /* Custom Luxury Date-Time Picker Styling */
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.8) sepia(1) saturate(5) hue-rotate(5deg);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 2px;
+      transition: transform 0.2s ease;
+    }
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+      transform: scale(1.15);
+      filter: invert(1) sepia(1) saturate(10) hue-rotate(10deg);
+    }
+
+    .toggle-card {
+      padding: 16px;
+      border: 1px solid rgba(212,175,55,0.2);
+    }
+
+    .toggle-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .toggle-label-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .toggle-title {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      color: var(--color-gold-light);
+      font-weight: 600;
+    }
+
+    .toggle-desc {
+      font-size: 0.65rem;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    /* Switch Slider CSS */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 22px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #333;
+      transition: .3s;
+      border-radius: 22px;
+      border: 1px solid #555;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 2px;
+      bottom: 2px;
+      background-color: #fff;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: var(--color-gold-primary);
+      border-color: var(--color-gold-primary);
+    }
+    input:checked + .slider:before {
+      transform: translateX(22px);
+      background-color: #000;
     }
 
     .form-row {
@@ -434,9 +726,11 @@ export class AdminComponent implements OnInit {
   products = signal<Product[]>([]);
   metrics = signal<any>(null);
   showModal = signal(false);
+  showBogoModal = signal(false);
   isEditing = signal(false);
   editingProductId = '';
   imageUrlsInput = '';
+  discountPercentage: number | undefined = undefined;
 
   formData = {
     name: '',
@@ -444,6 +738,11 @@ export class AdminComponent implements OnInit {
     description: '',
     price: 0,
     salePrice: undefined as number | undefined,
+    saleStartTime: '' as string | undefined,
+    saleEndTime: '' as string | undefined,
+    isSaleEnabled: false,
+    isBogoEnabled: false,
+    bogoPairProductId: null as string | null,
     isFeatured: false,
     stock: [
       { size: 'S', quantity: 10 },
@@ -473,16 +772,78 @@ export class AdminComponent implements OnInit {
     this.ecommerceService.fetchAdminMetrics().subscribe(m => this.metrics.set(m));
   }
 
+  isAnyBogoActive(): boolean {
+    return this.products().some(p => p.isBogoEnabled);
+  }
+
+  openBogoModal() {
+    this.showBogoModal.set(true);
+  }
+
+  toggleAllBogo(event: any) {
+    const enableAll = event.target.checked;
+    if (enableAll) {
+      this.openBogoModal();
+    } else {
+      // Disable BOGO for all products
+      const prods = this.products();
+      prods.forEach(p => {
+        if (p.isBogoEnabled) {
+          this.ecommerceService.updateProduct(p.id, { isBogoEnabled: false }).subscribe();
+        }
+      });
+      this.products.update(list => list.map(p => ({ ...p, isBogoEnabled: false })));
+    }
+  }
+
+  toggleProductBogo(product: Product, event: any) {
+    const isBogoEnabled = event.target.checked;
+    this.ecommerceService.updateProduct(product.id, { isBogoEnabled }).subscribe({
+      next: (updated) => {
+        this.products.update(list => list.map(p => p.id === updated.id ? { ...p, isBogoEnabled: updated.isBogoEnabled } : p));
+      },
+      error: (err) => alert(err?.error?.error || 'Failed to update BOGO status')
+    });
+  }
+
+  otherProductsForBogo(): Product[] {
+    return this.products().filter(p => p.id !== this.editingProductId);
+  }
+
+  onSaleToggleChange() {
+    if (!this.formData.isSaleEnabled) {
+      this.discountPercentage = undefined;
+      this.formData.salePrice = undefined;
+      this.formData.saleStartTime = '';
+      this.formData.saleEndTime = '';
+    }
+  }
+
+  updateSalePriceFromDiscount() {
+    if (this.formData.isSaleEnabled && this.discountPercentage !== undefined && this.discountPercentage > 0 && this.formData.price > 0) {
+      const discountAmount = (this.formData.price * this.discountPercentage) / 100;
+      this.formData.salePrice = Math.round((this.formData.price - discountAmount) * 100) / 100;
+    } else {
+      this.formData.salePrice = undefined;
+    }
+  }
+
   openAddProductModal() {
     this.isEditing.set(false);
     this.editingProductId = '';
     this.imageUrlsInput = '';
+    this.discountPercentage = undefined;
     this.formData = {
       name: '',
       categorySlug: 'men',
       description: '',
       price: 0,
       salePrice: undefined,
+      saleStartTime: '',
+      saleEndTime: '',
+      isSaleEnabled: false,
+      isBogoEnabled: false,
+      bogoPairProductId: null,
       isFeatured: false,
       stock: [
         { size: 'S', quantity: 10 },
@@ -497,12 +858,24 @@ export class AdminComponent implements OnInit {
     this.isEditing.set(true);
     this.editingProductId = product.id;
     this.imageUrlsInput = product.images ? product.images.join(', ') : '';
+
+    let calculatedDiscount: number | undefined = undefined;
+    if (product.price > 0 && product.salePrice && product.salePrice < product.price) {
+      calculatedDiscount = Math.round(((product.price - product.salePrice) / product.price) * 100);
+    }
+    this.discountPercentage = calculatedDiscount;
+
     this.formData = {
       name: product.name,
       categorySlug: product.category?.slug || 'men',
       description: product.description,
       price: product.price,
       salePrice: product.salePrice || undefined,
+      saleStartTime: product.saleStartTime ? new Date(product.saleStartTime).toISOString().slice(0, 16) : '',
+      saleEndTime: product.saleEndTime ? new Date(product.saleEndTime).toISOString().slice(0, 16) : '',
+      isSaleEnabled: !!product.isSaleEnabled,
+      isBogoEnabled: !!product.isBogoEnabled,
+      bogoPairProductId: product.bogoPairProductId || null,
       isFeatured: product.isFeatured,
       stock: product.stock && product.stock.length > 0
         ? product.stock.map(s => ({ size: s.size, quantity: s.quantity }))

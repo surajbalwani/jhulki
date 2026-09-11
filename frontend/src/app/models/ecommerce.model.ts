@@ -20,6 +20,11 @@ export interface Product {
   description: string;
   price: number;
   salePrice?: number | null;
+  saleStartTime?: string | null;
+  saleEndTime?: string | null;
+  isSaleEnabled?: boolean;
+  isBogoEnabled?: boolean;
+  bogoPairProductId?: string | null;
   images: string[];
   categoryId: string;
   category?: Category;

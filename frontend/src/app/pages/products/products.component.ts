@@ -62,8 +62,11 @@ import { Product } from '../../models/ecommerce.model';
             <span class="category-tag">{{ product.category?.name || 'HAUTE COUTURE' }}</span>
             <a [routerLink]="['/product', product.id]" class="product-name font-serif">{{ product.name }}</a>
             <div class="product-price">
-              <span class="current-price font-serif">₹{{ product.salePrice || product.price }}</span>
-              <span class="old-price" *ngIf="product.salePrice">₹{{ product.price }}</span>
+              <span class="current-price font-serif">₹{{ ecommerceService.getEffectivePrice(product) }}</span>
+              <span class="old-price" *ngIf="ecommerceService.isSaleActive(product)">₹{{ product.price }}</span>
+              <span class="sale-badge ml-auto" *ngIf="ecommerceService.isSaleActive(product)" style="font-size:0.6rem; color:#000; background:#d4af37; padding:2px 8px; border-radius:2px; font-weight:600; letter-spacing:0.05em;">
+                {{ ecommerceService.getSaleCountdownLabel(product) }}
+              </span>
             </div>
             <a [routerLink]="['/product', product.id]" class="view-details-btn">
               VIEW DETAILS
@@ -288,9 +291,13 @@ export class ProductsComponent implements OnInit {
   categories = [
     { name: 'All Collections', slug: 'all' },
     { name: 'Men', slug: 'men' },
+    { name: 'Kurta', slug: 'kurta' },
     { name: 'Women', slug: 'women' },
+    { name: 'Chaniya Choli', slug: 'chaniya-choli' },
+    { name: 'Blouse', slug: 'blouse' },
     { name: 'Accessories', slug: 'accessories' },
-    { name: 'Footwear', slug: 'footwear' },
+    { name: 'Kids', slug: 'kids' },
+    { name: 'Couple', slug: 'couple' },
   ];
 
   currentCategory = 'all';

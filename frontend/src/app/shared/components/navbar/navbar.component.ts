@@ -34,10 +34,50 @@ import { EcommerceService } from '../../../services/ecommerce.service';
         <!-- Desktop Navigation Categories -->
         <nav class="desktop-nav">
           <a routerLink="/products" [queryParams]="{category: 'all'}" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">ALL COLLECTIONS</a>
-          <a routerLink="/products" [queryParams]="{category: 'men'}" routerLinkActive="active">MEN</a>
-          <a routerLink="/products" [queryParams]="{category: 'women'}" routerLinkActive="active">WOMEN</a>
+          <!-- MEN Dropdown (Kurta, Suits & Outerwear) -->
+          <div class="nav-dropdown-wrap">
+            <a routerLink="/products" [queryParams]="{category: 'men'}" routerLinkActive="active" class="dropdown-trigger">
+              MEN
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </a>
+            <div class="luxury-dropdown-menu">
+              <a routerLink="/products" [queryParams]="{category: 'men'}" routerLinkActive="active">ALL MEN'S</a>
+              <a routerLink="/products" [queryParams]="{category: 'kurta'}" routerLinkActive="active">HAUTE KURTA SETS</a>
+            </div>
+          </div>
+          
+          <!-- WOMEN Dropdown (Chaniya Choli & Blouse) -->
+          <div class="nav-dropdown-wrap">
+            <a routerLink="/products" [queryParams]="{category: 'women'}" routerLinkActive="active" class="dropdown-trigger">
+              WOMEN
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </a>
+            <div class="luxury-dropdown-menu">
+              <a routerLink="/products" [queryParams]="{category: 'women'}" routerLinkActive="active">ALL WOMEN'S</a>
+              <a routerLink="/products" [queryParams]="{category: 'chaniya-choli'}" routerLinkActive="active">CHANIYA CHOLI</a>
+              <a routerLink="/products" [queryParams]="{category: 'blouse'}" routerLinkActive="active">BLOUSE & CORSETS</a>
+            </div>
+          </div>
+
           <a routerLink="/products" [queryParams]="{category: 'accessories'}" routerLinkActive="active">ACCESSORIES</a>
-          <a routerLink="/products" [queryParams]="{category: 'footwear'}" routerLinkActive="active">FOOTWEAR</a>
+          
+          <!-- MORE Dropdown (Kids & Couple) -->
+          <div class="nav-dropdown-wrap">
+            <span class="dropdown-trigger">
+              MORE
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </span>
+            <div class="luxury-dropdown-menu">
+              <a routerLink="/products" [queryParams]="{category: 'kids'}" routerLinkActive="active">KIDS ATELIER</a>
+              <a routerLink="/products" [queryParams]="{category: 'couple'}" routerLinkActive="active">COUPLE SETS</a>
+            </div>
+          </div>
         </nav>
 
         <!-- Action Icons & Profile -->
@@ -111,7 +151,8 @@ import { EcommerceService } from '../../../services/ecommerce.service';
           <a routerLink="/products" [queryParams]="{category: 'men'}" (click)="toggleSidebar()">Men's Atelier</a>
           <a routerLink="/products" [queryParams]="{category: 'women'}" (click)="toggleSidebar()">Women's Runway</a>
           <a routerLink="/products" [queryParams]="{category: 'accessories'}" (click)="toggleSidebar()">Fine Accessories</a>
-          <a routerLink="/products" [queryParams]="{category: 'footwear'}" (click)="toggleSidebar()">Footwear & Shoes</a>
+          <a routerLink="/products" [queryParams]="{category: 'kids'}" (click)="toggleSidebar()">Kids' Atelier</a>
+          <a routerLink="/products" [queryParams]="{category: 'couple'}" (click)="toggleSidebar()">Couple Sets</a>
         </div>
 
         <div class="sidebar-group mt-4" *ngIf="authService.isLoggedIn()">
@@ -195,6 +236,65 @@ import { EcommerceService } from '../../../services/ecommerce.service';
     .desktop-nav a:hover, .desktop-nav a.active {
       color: var(--color-gold-light);
       border-bottom: 1px solid var(--color-gold-primary);
+    }
+
+    .nav-dropdown-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-trigger {
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      font-weight: 500;
+      color: #a0a0b5;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding-bottom: 4px;
+      transition: var(--transition-smooth);
+    }
+
+    .nav-dropdown-wrap:hover .dropdown-trigger {
+      color: var(--color-gold-light);
+    }
+
+    .luxury-dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      min-width: 170px;
+      background: #0d0d11;
+      border: 1px solid var(--color-border-glow);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      border-radius: 4px;
+      padding: 10px 0;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: var(--transition-smooth);
+      z-index: 150;
+    }
+
+    .nav-dropdown-wrap:hover .luxury-dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .luxury-dropdown-menu a {
+      display: block;
+      padding: 8px 18px;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      color: #ccc;
+      border-bottom: none;
+    }
+
+    .luxury-dropdown-menu a:hover {
+      background: rgba(212, 175, 55, 0.1);
+      color: var(--color-gold-primary);
     }
 
     .header-actions {

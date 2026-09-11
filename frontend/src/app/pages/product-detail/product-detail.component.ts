@@ -39,9 +39,12 @@ import { Product } from '../../models/ecommerce.model';
 
           <h1 class="product-title font-serif">{{ product()?.name }}</h1>
 
-          <div class="price-bar">
-            <span class="price font-serif">₹{{ product()?.salePrice || product()?.price }}</span>
-            <span class="old-price" *ngIf="product()?.salePrice">₹{{ product()?.price }}</span>
+          <div class="price-bar" *ngIf="product() as prod">
+            <span class="price font-serif">₹{{ ecommerceService.getEffectivePrice(prod) }}</span>
+            <span class="old-price" *ngIf="ecommerceService.isSaleActive(prod)">₹{{ prod.price }}</span>
+            <span class="badge-gold ml-2" *ngIf="ecommerceService.isSaleActive(prod)" style="background:#d4af37; color:#000; font-weight:700; padding:4px 10px; border-radius:2px;">
+              {{ ecommerceService.getSaleCountdownLabel(prod) }}
+            </span>
           </div>
 
           <p class="description">{{ product()?.description }}</p>

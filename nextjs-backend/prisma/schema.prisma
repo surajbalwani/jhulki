@@ -64,6 +64,11 @@ model Product {
   description String
   price       Float
   salePrice   Float?
+  saleStartTime DateTime?
+  saleEndTime   DateTime?
+  isSaleEnabled Boolean     @default(false)
+  isBogoEnabled Boolean     @default(false)
+  bogoPairProductId String?
   images      String[]      // Array of high-res luxury product image URLs
   categoryId  String
   category    Category      @relation(fields: [categoryId], references: [id])

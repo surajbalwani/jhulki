@@ -45,7 +45,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await req.json();
-    const { name, description, price, salePrice, images, isFeatured, isNewArrival, stock } = body;
+    const { name, description, price, salePrice, saleStartTime, saleEndTime, isSaleEnabled, isBogoEnabled, bogoPairProductId, images, isFeatured, isNewArrival, stock } = body;
 
     const product = await prisma.product.update({
       where: { id },
@@ -54,6 +54,11 @@ export async function PUT(
         ...(description && { description }),
         ...(price !== undefined && { price: parseFloat(price) }),
         ...(salePrice !== undefined && { salePrice: salePrice ? parseFloat(salePrice) : null }),
+        ...(saleStartTime !== undefined && { saleStartTime: saleStartTime ? new Date(saleStartTime) : null }),
+        ...(saleEndTime !== undefined && { saleEndTime: saleEndTime ? new Date(saleEndTime) : null }),
+        ...(isSaleEnabled !== undefined && { isSaleEnabled: !!isSaleEnabled }),
+        ...(isBogoEnabled !== undefined && { isBogoEnabled: !!isBogoEnabled }),
+        ...(bogoPairProductId !== undefined && { bogoPairProductId: bogoPairProductId || null }),
         ...(images && { images }),
         ...(isFeatured !== undefined && { isFeatured }),
         ...(isNewArrival !== undefined && { isNewArrival }),

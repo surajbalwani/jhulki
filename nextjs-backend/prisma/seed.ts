@@ -36,8 +36,12 @@ async function main() {
   const categoriesData = [
     { name: 'Men', slug: 'men', description: 'Tailored suits, cashmere coats, and haute outerwear' },
     { name: 'Women', slug: 'women', description: 'Silk gowns, luxury coats, and artisanal tailoring' },
+    { name: 'Kurta', slug: 'kurta', description: 'Handcrafted luxury raw silk & Gajji silk designer kurtas for men' },
+    { name: 'Chaniya Choli', slug: 'chaniya-choli', description: 'Bespoke Kutchi mirrorwork & artisanal silk chaniya choli sets' },
+    { name: 'Blouse', slug: 'blouse', description: 'Haute couture hand-embroidered blouses & corsets' },
     { name: 'Accessories', slug: 'accessories', description: 'Handcrafted leather bags, gold jewelry, and silk scarves' },
-    { name: 'Footwear', slug: 'footwear', description: 'Handmade Italian leather boots & velvet loafers' },
+    { name: 'Kids', slug: 'kids', description: 'Bespoke luxury wear and occasion attire for children' },
+    { name: 'Couple', slug: 'couple', description: 'Matching haute couture ensembles for couples' },
   ];
 
   const categoriesMap: Record<string, string> = {};
@@ -121,20 +125,98 @@ async function main() {
       ]
     },
     {
-      name: 'Royal Velvet Embroidered Loafers',
-      slug: 'royal-velvet-embroidered-loafers',
-      description: 'Handcrafted velvet slippers with gold bullion crest emblem and cushioned leather lining.',
-      price: 59000.00,
+      name: 'Little Prince Velvet Sherwani Set',
+      slug: 'little-prince-velvet-sherwani',
+      description: 'Hand-embroidered royal velvet jacket with silk pyjama trousers for young gentlemen.',
+      price: 35000.00,
       images: [
-        'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?q=80&w=1000'
+        'https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?q=80&w=1000'
       ],
-      categorySlug: 'footwear',
+      categorySlug: 'kids',
       isFeatured: true,
       stock: [
-        { size: '40 EU', quantity: 5 },
-        { size: '41 EU', quantity: 10 },
-        { size: '42 EU', quantity: 8 },
-        { size: '43 EU', quantity: 4 },
+        { size: '2-3Y', quantity: 5 },
+        { size: '4-5Y', quantity: 8 },
+        { size: '6-7Y', quantity: 6 },
+      ]
+    },
+    {
+      name: 'Royal Heritage Matching Couple Set',
+      slug: 'royal-heritage-matching-couple-set',
+      description: 'Coordinated gold embroidered tuxedo & floor-length gown set crafted for grand celebrations.',
+      price: 380000.00,
+      salePrice: 345000.00,
+      images: [
+        'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1000',
+        'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1000'
+      ],
+      categorySlug: 'couple',
+      isFeatured: true,
+      stock: [
+        { size: 'Set M/S', quantity: 3 },
+        { size: 'Set L/M', quantity: 4 },
+      ]
+    },
+    {
+      name: 'Jhulki First Edition Chaniya Choli set',
+      slug: 'jhulki-first-edition-chaniya-choli-set',
+      description: 'Handcrafted luxury Kutchi mirrorwork embroidered choli blouse paired with a high-flared pleated black skirt and vibrant red silk dupatta. Features Jhulki signature gold-stitched inner branding tag.',
+      price: 245000.00,
+      salePrice: 215000.00,
+      images: [
+        '/products/chaniya-choli/full.jpg',
+        '/products/chaniya-choli/back.jpg',
+        '/products/chaniya-choli/zoom.jpg',
+        '/products/chaniya-choli/tag.jpg'
+      ],
+      categorySlug: 'chaniya-choli',
+      isFeatured: true,
+      stock: [
+        { size: 'S', quantity: 4 },
+        { size: 'M', quantity: 6 },
+        { size: 'L', quantity: 3 },
+      ]
+    },
+    {
+      name: 'Royal Black Asymmetrical Kutchi Embroidered Kurta Set',
+      slug: 'royal-black-asymmetrical-kutchi-kurta',
+      description: 'Hand-tailored raw silk knee-length black kurta sherwani with an asymmetrical vertical Kutchi mirror-work panel. Features Jhulki signature gold inner collar tag.',
+      price: 165000.00,
+      salePrice: 145000.00,
+      images: [
+        '/products/kurta-black-kutchi/full.jpg',
+        '/products/kurta-black-kutchi/back.jpg',
+        '/products/kurta-black-kutchi/side.jpg',
+        '/products/kurta-black-kutchi/zoom.jpg',
+        '/products/kurta-black-kutchi/tag.jpg'
+      ],
+      categorySlug: 'kurta',
+      isFeatured: true,
+      isBogoEnabled: true,
+      stock: [
+        { size: '38R', quantity: 6 },
+        { size: '40R', quantity: 10 },
+        { size: '42R', quantity: 5 },
+      ]
+    },
+    {
+      name: 'Festive Teal Blue Gajji Silk Printed Kurta Set',
+      slug: 'festive-teal-blue-gajji-silk-kurta',
+      description: 'Pure Gajji silk kurta in royal teal blue with gold bandhani dot prints and 3 hand-embroidered red pocket patches with hanging yellow tassels. Paired with white pyjama trousers.',
+      price: 135000.00,
+      images: [
+        '/products/kurta-teal-gajji/full.jpg',
+        '/products/kurta-teal-gajji/back.jpg',
+        '/products/kurta-teal-gajji/side.jpg',
+        '/products/kurta-teal-gajji/zoom.jpg'
+      ],
+      categorySlug: 'kurta',
+      isFeatured: true,
+      isBogoEnabled: true,
+      stock: [
+        { size: '38R', quantity: 8 },
+        { size: '40R', quantity: 12 },
+        { size: '42R', quantity: 6 },
       ]
     }
   ];

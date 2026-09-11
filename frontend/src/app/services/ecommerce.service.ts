@@ -150,4 +150,90 @@ export class EcommerceService {
   fetchAdminMetrics(): Observable<any> {
     return this.http.get(`${API_URL}/admin/metrics`);
   }
+
+  isSaleActive(product: Product): boolean {
+    if (!product.isSaleEnabled) return false;
+    if (!product.salePrice || product.salePrice >= product.price) return false;
+    const now = new Date().getTime();
+    if (product.saleStartTime && now < new Date(product.saleStartTime).getTime()) return false;
+    if (product.saleEndTime && now > new Date(product.saleEndTime).getTime()) return false;
+    return true;
+  }
+
+  getEffectivePrice(product: Product): number {
+    return this.isSaleActive(product) ? (product.salePrice as number) : product.price;
+  }
+
+  getDiscountPercentage(product: Product): number {
+    if (!product.salePrice || product.price <= 0) return 0;
+    return Math.round(((product.price - product.salePrice) / product.price) * 100);
+  }
+
+  getSaleCountdownLabel(product: Product): string {
+    if (!this.isSaleActive(product)) return '';
+    const discount = this.getDiscountPercentage(product);
+
+    if (product.saleEndTime) {
+      const now = new Date().getTime();
+      const end = new Date(product.saleEndTime).getTime();
+      const diffMs = end - now;
+
+      if (diffMs > 0) {
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+        if (diffHours >= 24) {
+          const diffDays = Math.floor(diffHours / 24);
+          return `${discount}% OFF • Sale ends in ${diffDays} day${diffDays > 1 ? 's' : ''}`;
+        } else if (diffHours >= 1) {
+          return `${discount}% OFF • Sale ends in ${diffHours} hr${diffHours > 1 ? 's' : ''}`;
+        } else {
+          return `${discount}% OFF • Sale ends in ${Math.max(1, diffMins)} min${diffMins > 1 ? 's' : ''}`;
+        }
+      }
+    }
+
+    return discount > 0 ? `${discount}% OFF` : 'LIMITED SALE';
+  }
+
+  // Calculate Cart Subtotal & BOGO Discount Breakdown
+  calculateCartSummary(): { originalSubtotal: number; bogoDiscount: number; finalTotal: number; bogoAppliedPairs: number } {
+    const items = this.cartItems();
+    let originalSubtotal = 0;
+
+    // Expand items into individual unit prices for BOGO comparison
+    const bogoUnits: number[] = [];
+
+    for (const item of items) {
+      const unitPrice = this.getEffectivePrice(item.product);
+      originalSubtotal += unitPrice * item.quantity;
+
+      if (item.product.isBogoEnabled) {
+        for (let i = 0; i < item.quantity; i++) {
+          bogoUnits.push(unitPrice);
+        }
+      }
+    }
+
+    // Sort BOGO eligible item prices in descending order (highest value first)
+    bogoUnits.sort((a, b) => b - a);
+
+    let bogoDiscount = 0;
+    const bogoAppliedPairs = Math.floor(bogoUnits.length / 2);
+
+    // BOGO Rule: For every 2 BOGO items, charge for the higher priced one and discount the lower priced one (100% OFF lower price unit)
+    for (let i = 0; i < bogoAppliedPairs; i++) {
+      const freeItemPrice = bogoUnits[bogoUnits.length - 1 - i]; // Discount lower price unit
+      bogoDiscount += freeItemPrice;
+    }
+
+    const finalTotal = Math.max(0, originalSubtotal - bogoDiscount);
+
+    return {
+      originalSubtotal,
+      bogoDiscount,
+      finalTotal,
+      bogoAppliedPairs
+    };
+  }
 }

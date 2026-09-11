@@ -26,7 +26,10 @@ import { Address } from '../../models/ecommerce.model';
               <span class="category">{{ item.product.category?.name }}</span>
               <h3 class="name font-serif">{{ item.product.name }}</h3>
               <p class="size-info">Selected Size: <strong>{{ item.size }}</strong></p>
-              <div class="price font-serif">₹{{ item.product.salePrice || item.product.price }}</div>
+              <div class="price font-serif">
+                ₹{{ ecommerceService.getEffectivePrice(item.product) }}
+                <span *ngIf="item.product.isBogoEnabled" class="bogo-chip ml-2">🎁 BOGO ELIGIBLE</span>
+              </div>
             </div>
 
             <div class="item-qty">
@@ -45,7 +48,12 @@ import { Address } from '../../models/ecommerce.model';
 
           <div class="summary-row">
             <span>Subtotal</span>
-            <span class="font-serif">₹{{ calculateSubtotal() }}</span>
+            <span class="font-serif">₹{{ summary().originalSubtotal | number:'1.2-2' }}</span>
+          </div>
+
+          <div class="summary-row" *ngIf="summary().bogoDiscount > 0">
+            <span class="gold-text">BUY 1 GET 1 DISCOUNT</span>
+            <span class="gold-text font-serif">- ₹{{ summary().bogoDiscount | number:'1.2-2' }}</span>
           </div>
 
           <div class="summary-row">
@@ -55,7 +63,7 @@ import { Address } from '../../models/ecommerce.model';
 
           <div class="summary-row total-row">
             <span>Estimated Total</span>
-            <span class="total-price font-serif">₹{{ calculateSubtotal() }}</span>
+            <span class="total-price font-serif">₹{{ summary().finalTotal | number:'1.2-2' }}</span>
           </div>
 
           <!-- Address Picker for Checkout -->
@@ -250,6 +258,17 @@ import { Address } from '../../models/ecommerce.model';
       color: var(--color-gold-light);
     }
 
+    .bogo-chip {
+      background: rgba(212,175,55,0.15);
+      border: 1px solid var(--color-gold-primary);
+      color: var(--color-gold-light);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      padding: 2px 6px;
+      border-radius: 2px;
+      vertical-align: middle;
+    }
+
     @media (max-width: 900px) {
       .cart-layout {
         grid-template-columns: 1fr;
@@ -282,11 +301,8 @@ export class CartComponent implements OnInit {
     });
   }
 
-  calculateSubtotal(): number {
-    return this.ecommerceService.cartItems().reduce((sum, item) => {
-      const p = item.product.salePrice || item.product.price;
-      return sum + p * item.quantity;
-    }, 0);
+  summary() {
+    return this.ecommerceService.calculateCartSummary();
   }
 
   removeItem(cartItemId: string) {
@@ -300,8 +316,10 @@ export class CartComponent implements OnInit {
       return;
     }
 
+    const finalAmount = this.summary().finalTotal;
+
     this.isProcessing.set(true);
-    this.ecommerceService.checkoutOrder(this.calculateSubtotal(), address, 'Luxury Credit Card').subscribe({
+    this.ecommerceService.checkoutOrder(finalAmount, address, 'Luxury Credit Card').subscribe({
       next: (order) => {
         this.isProcessing.set(false);
         alert(`Thank you for your purchase! Order #${order.orderNumber} has been placed.`);

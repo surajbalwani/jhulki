@@ -54,7 +54,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, description, price, salePrice, images, categorySlug, isFeatured, isNewArrival, stock } = body;
+    const { name, description, price, salePrice, saleStartTime, saleEndTime, isSaleEnabled, isBogoEnabled, bogoPairProductId, images, categorySlug, isFeatured, isNewArrival, stock } = body;
 
     if (!name || !description || price === undefined || !categorySlug) {
       return NextResponse.json(
@@ -85,6 +85,11 @@ export async function POST(req: NextRequest) {
         description,
         price: parseFloat(price),
         salePrice: salePrice ? parseFloat(salePrice) : null,
+        saleStartTime: saleStartTime ? new Date(saleStartTime) : null,
+        saleEndTime: saleEndTime ? new Date(saleEndTime) : null,
+        isSaleEnabled: !!isSaleEnabled,
+        isBogoEnabled: !!isBogoEnabled,
+        bogoPairProductId: bogoPairProductId || null,
         images: images && images.length > 0 ? images : ['https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=1000'],
         categoryId: category.id,
         isFeatured: !!isFeatured,

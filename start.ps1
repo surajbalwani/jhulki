@@ -1,4 +1,4 @@
-Write-Host "Starting Jhulki Luxury App (Next.js Backend + Angular Frontend)..." -ForegroundColor Gold
+Write-Host "Starting Jhulki Luxury App (Next.js Backend + Angular Frontend)..." -ForegroundColor Yellow
 
 # Start Next.js Backend API
 Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$PSScriptRoot\nextjs-backend'; npm run dev"
