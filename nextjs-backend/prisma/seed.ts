@@ -218,6 +218,189 @@ async function main() {
         { size: '40R', quantity: 12 },
         { size: '42R', quantity: 6 },
       ]
+    },
+    {
+      name: 'Ivory Multi-Color Bandhani Tiered Chaniya Choli Set',
+      slug: 'ivory-multicolor-bandhani-chaniya-choli',
+      description: 'Handcrafted pure white tiered flared cotton lehenga skirt with colorful embroidery speckles, paired with a vibrant Kutchi mirror-work sleeveless blouse, multi-color tie-dye Bandhani dupatta, and pompom tassels.',
+      price: 225000.00,
+      salePrice: 195000.00,
+      images: [
+        '/products/ivory-multicolor-bandhani-chaniya-choli/full.jpg',
+        '/products/ivory-multicolor-bandhani-chaniya-choli/back.jpg',
+        '/products/ivory-multicolor-bandhani-chaniya-choli/zoom.jpg',
+        '/products/ivory-multicolor-bandhani-chaniya-choli/tag.jpg'
+      ],
+      categorySlug: 'chaniya-choli',
+      isFeatured: true,
+      stock: [
+        { size: 'S', quantity: 5 },
+        { size: 'M', quantity: 8 },
+        { size: 'L', quantity: 4 },
+      ]
+    },
+    {
+      name: 'Imperial Off-White Gold Mirrorwork Chaniya Choli Set',
+      slug: 'imperial-offwhite-gold-mirrorwork-chaniya-choli',
+      description: 'Off-white heavy flared silk lehenga featuring rich metallic gold zari borders and diamond-embroidered Kutchi mirrorwork motifs. Includes shell-tasseled blouse and striped gold dupatta.',
+      price: 285000.00,
+      salePrice: 250000.00,
+      images: [
+        '/products/imperial-offwhite-gold-mirrorwork-chaniya-choli/full.jpg',
+        '/products/imperial-offwhite-gold-mirrorwork-chaniya-choli/back.jpg',
+        '/products/imperial-offwhite-gold-mirrorwork-chaniya-choli/zoom.jpg',
+        '/products/imperial-offwhite-gold-mirrorwork-chaniya-choli/tag.jpg'
+      ],
+      categorySlug: 'chaniya-choli',
+      isFeatured: true,
+      isBogoEnabled: true,
+      stock: [
+        { size: 'S', quantity: 3 },
+        { size: 'M', quantity: 6 },
+        { size: 'L', quantity: 5 },
+      ]
+    },
+    {
+      name: 'Royal Violet Mirrorwork Corset Chaniya Choli Set',
+      slug: 'royal-violet-mirrorwork-corset-chaniya-choli',
+      description: 'Deep royal purple silk sweetheart corset blouse detailed with Kutchi mirrorwork and hanging pearl drop trim, paired with a knife-pleated purple flared lehenga and mirror waist trim.',
+      price: 198000.00,
+      salePrice: 175000.00,
+      images: [
+        '/products/royal-violet-mirrorwork-corset-chaniya-choli/full.jpg',
+        '/products/royal-violet-mirrorwork-corset-chaniya-choli/back.jpg',
+        '/products/royal-violet-mirrorwork-corset-chaniya-choli/zoom.jpg',
+        '/products/royal-violet-mirrorwork-corset-chaniya-choli/tag.jpg'
+      ],
+      categorySlug: 'chaniya-choli',
+      isFeatured: true,
+      stock: [
+        { size: 'S', quantity: 6 },
+        { size: 'M', quantity: 7 },
+        { size: 'L', quantity: 3 },
+      ]
+    },
+    {
+      name: 'Black & Magenta Kutchi Embroidered Chaniya Choli Set',
+      slug: 'black-magenta-kutchi-embroidered-chaniya-choli',
+      description: 'High-flared black cotton lehenga with vibrant multi-color Kutchi embroidered hem border, paired with a black embroidered blouse and a scalloped hot pink dupatta.',
+      price: 210000.00,
+      salePrice: 185000.00,
+      images: [
+        '/products/black-magenta-kutchi-embroidered-chaniya-choli/full.jpg',
+        '/products/black-magenta-kutchi-embroidered-chaniya-choli/back.jpg',
+        '/products/black-magenta-kutchi-embroidered-chaniya-choli/zoom.jpg',
+        '/products/black-magenta-kutchi-embroidered-chaniya-choli/tag.jpg'
+      ],
+      categorySlug: 'chaniya-choli',
+      isFeatured: true,
+      stock: [
+        { size: 'S', quantity: 4 },
+        { size: 'M', quantity: 9 },
+        { size: 'L', quantity: 4 },
+      ]
+    },
+    {
+      name: 'Plum & Ivory Royal Kutchi Patchwork Chaniya Choli Set',
+      slug: 'plum-ivory-royal-kutchi-chaniya-choli',
+      description: 'Deep plum silk choli with geometric Kutchi patch embroidery and gold woven sleeves, complemented by a pristine ivory pleated lehenga with wide tissue zari hem border.',
+      price: 265000.00,
+      salePrice: 230000.00,
+      images: [
+        '/products/plum-ivory-royal-kutchi-chaniya-choli/full.jpg',
+        '/products/plum-ivory-royal-kutchi-chaniya-choli/back.jpg',
+        '/products/plum-ivory-royal-kutchi-chaniya-choli/zoom.jpg',
+        '/products/plum-ivory-royal-kutchi-chaniya-choli/tag.jpg'
+      ],
+      categorySlug: 'chaniya-choli',
+      isFeatured: true,
+      isBogoEnabled: true,
+      stock: [
+        { size: 'S', quantity: 5 },
+        { size: 'M', quantity: 5 },
+        { size: 'L', quantity: 2 },
+      ]
+    },
+    {
+      name: 'Black Georgette Rabari Embroidered Navratri Chaniya Choli Set',
+      slug: 'black-georgette-rabari-navratri-chaniya-choli',
+      description: 'Jet black georgette Navratri ensemble featuring Rabari waistband peplum flaps, multi-tiered elephant & floral Kutchi borders, and mustard yellow crushed silk dupatta.',
+      price: 240000.00,
+      salePrice: 210000.00,
+      images: [
+        '/products/black-georgette-rabari-navratri-chaniya-choli/full.jpg',
+        '/products/black-georgette-rabari-navratri-chaniya-choli/back.jpg',
+        '/products/black-georgette-rabari-navratri-chaniya-choli/zoom.jpg',
+        '/products/black-georgette-rabari-navratri-chaniya-choli/tag.jpg'
+      ],
+      categorySlug: 'chaniya-choli',
+      isFeatured: true,
+      stock: [
+        { size: 'S', quantity: 7 },
+        { size: 'M', quantity: 10 },
+        { size: 'L', quantity: 5 },
+      ]
+    },
+    {
+      name: 'Purple & White Dual-Tone Kutchi Mirrorwork Chaniya Choli Set',
+      slug: 'purple-white-dualtone-kutchi-chaniya-choli',
+      description: 'Dual-tone purple and ivory flared chaniya choli set embellished with traditional Kutchi floral mirrorwork borders and matching arch-motif embroidered white drape dupatta.',
+      price: 189000.00,
+      salePrice: 165000.00,
+      images: [
+        '/products/purple-white-dualtone-kutchi-chaniya-choli/full.jpg',
+        '/products/purple-white-dualtone-kutchi-chaniya-choli/back.jpg',
+        '/products/purple-white-dualtone-kutchi-chaniya-choli/zoom.jpg',
+        '/products/purple-white-dualtone-kutchi-chaniya-choli/tag.jpg'
+      ],
+      categorySlug: 'chaniya-choli',
+      isFeatured: true,
+      stock: [
+        { size: 'S', quantity: 4 },
+        { size: 'M', quantity: 8 },
+        { size: 'L', quantity: 3 },
+      ]
+    },
+    {
+      name: 'White Lotus Printed Kutchi Embroidered Chaniya Choli Set',
+      slug: 'white-lotus-kutchi-embroidered-chaniya-choli',
+      description: 'Pristine white cotton lehenga with lotus block prints, gold damask jacquard flare, and colorful Kutchi mirrorwork middle border band. Paired with black choli and crimson pompom dupatta.',
+      price: 235000.00,
+      salePrice: 199000.00,
+      images: [
+        '/products/white-lotus-kutchi-embroidered-chaniya-choli/full.jpg',
+        '/products/white-lotus-kutchi-embroidered-chaniya-choli/back.jpg',
+        '/products/white-lotus-kutchi-embroidered-chaniya-choli/zoom.jpg',
+        '/products/white-lotus-kutchi-embroidered-chaniya-choli/tag.jpg'
+      ],
+      categorySlug: 'chaniya-choli',
+      isFeatured: true,
+      isBogoEnabled: true,
+      stock: [
+        { size: 'S', quantity: 6 },
+        { size: 'M', quantity: 7 },
+        { size: 'L', quantity: 4 },
+      ]
+    },
+    {
+      name: 'Noir Royal Tiered Gold Zari Chaniya Choli Set',
+      slug: 'noir-royal-tiered-gold-zari-chaniya-choli',
+      description: 'Haute couture noir black tiered crushed silk lehenga accented with handcrafted gold zari bootis and wide metallic gold border, paired with full-sleeve black blouse and rani pink Banarasi dupatta.',
+      price: 295000.00,
+      salePrice: 260000.00,
+      images: [
+        '/products/noir-royal-tiered-gold-zari-chaniya-choli/full.jpg',
+        '/products/noir-royal-tiered-gold-zari-chaniya-choli/back.jpg',
+        '/products/noir-royal-tiered-gold-zari-chaniya-choli/zoom.jpg',
+        '/products/noir-royal-tiered-gold-zari-chaniya-choli/tag.jpg'
+      ],
+      categorySlug: 'chaniya-choli',
+      isFeatured: true,
+      stock: [
+        { size: 'S', quantity: 3 },
+        { size: 'M', quantity: 5 },
+        { size: 'L', quantity: 3 },
+      ]
     }
   ];
 
