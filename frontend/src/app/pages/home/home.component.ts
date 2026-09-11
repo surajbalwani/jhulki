@@ -18,8 +18,8 @@ import { Alert } from '../../utils/alert.utils';
         <div class="hero-overlay"></div>
         <div class="hero-content">
           <span class="badge-gold mb-3">VIBRANT NAVRATRI & FESTIVE COLLECTION</span>
-          <h1 class="hero-title gold-gradient-text">TIMLESS ELEGANCE & HAUTE COUTURE</h1>
-          <p class="hero-subtitle">Discover handcrafted luxury garments engineered with silk, cashmere, and fine Italian leather.</p>
+          <h1 class="hero-title gold-gradient-text">ROYAL NAVRATRI ETHNIC & GARBA ATTIRE</h1>
+          <p class="hero-subtitle">Discover handcrafted Kutchi mirrorwork chaniya cholis, designer Gajji silk kurtas, and bespoke royal festive ensembles.</p>
           <div class="hero-actions mt-4">
             <a routerLink="/products" [queryParams]="{category: 'all'}" class="luxury-btn-primary">
               EXPLORE COLLECTION
