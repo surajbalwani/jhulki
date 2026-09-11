@@ -4,7 +4,20 @@ import { Router } from '@angular/router';
 import { Observable, tap, catchError, of } from 'rxjs';
 import { User } from '../models/ecommerce.model';
 
-export const API_URL = 'http://localhost:5292/api';
+export function getApiUrl(): string {
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem('jhulki_api_url');
+    if (saved) return saved.endsWith('/') ? saved.slice(0, -1) : saved;
+
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      // In live Vercel deployment, check window location or relative api path
+      return window.location.origin + '/api';
+    }
+  }
+  return 'http://localhost:5292/api';
+}
+
+export const API_URL = getApiUrl();
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +45,7 @@ export class AuthService {
   }
 
   signup(data: any): Observable<any> {
-    return this.http.post(`${API_URL}/auth/signup`, data).pipe(
+    return this.http.post(`${getApiUrl()}/auth/signup`, data).pipe(
       tap((res: any) => {
         if (res.token && res.user) {
           this.setSession(res.token, res.user);
@@ -42,7 +55,7 @@ export class AuthService {
   }
 
   login(data: any): Observable<any> {
-    return this.http.post(`${API_URL}/auth/login`, data).pipe(
+    return this.http.post(`${getApiUrl()}/auth/login`, data).pipe(
       tap((res: any) => {
         if (res.token && res.user) {
           this.setSession(res.token, res.user);

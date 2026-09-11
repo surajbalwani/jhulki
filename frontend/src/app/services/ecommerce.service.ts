@@ -2,12 +2,16 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap, of, catchError } from 'rxjs';
 import { Product, CartItem, WishlistItem, Address, Order } from '../models/ecommerce.model';
-import { AuthService, API_URL } from './auth.service';
+import { AuthService, getApiUrl } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EcommerceService {
+  private get apiUrl(): string {
+    return getApiUrl();
+  }
+
   products = signal<Product[]>([]);
   cartItems = signal<CartItem[]>([]);
   wishlistItems = signal<WishlistItem[]>([]);
@@ -17,7 +21,7 @@ export class EcommerceService {
   constructor(private http: HttpClient, private auth: AuthService) {}
 
   fetchProducts(categorySlug?: string, search?: string, sort?: string): Observable<Product[]> {
-    let query = `${API_URL}/products?`;
+    let query = `${this.apiUrl}/products?`;
     if (categorySlug && categorySlug !== 'all') query += `category=${categorySlug}&`;
     if (search) query += `search=${encodeURIComponent(search)}&`;
     if (sort) query += `sort=${sort}`;
@@ -28,23 +32,23 @@ export class EcommerceService {
   }
 
   getProduct(idOrSlug: string): Observable<Product> {
-    return this.http.get<Product>(`${API_URL}/products/${idOrSlug}`);
+    return this.http.get<Product>(`${this.apiUrl}/products/${idOrSlug}`);
   }
 
   createProduct(data: any): Observable<Product> {
-    return this.http.post<Product>(`${API_URL}/products`, data).pipe(
+    return this.http.post<Product>(`${this.apiUrl}/products`, data).pipe(
       tap(() => this.fetchProducts().subscribe())
     );
   }
 
   updateProduct(id: string, data: any): Observable<Product> {
-    return this.http.put<Product>(`${API_URL}/products/${id}`, data).pipe(
+    return this.http.put<Product>(`${this.apiUrl}/products/${id}`, data).pipe(
       tap(() => this.fetchProducts().subscribe())
     );
   }
 
   deleteProduct(id: string): Observable<any> {
-    return this.http.delete(`${API_URL}/products/${id}`).pipe(
+    return this.http.delete(`${this.apiUrl}/products/${id}`).pipe(
       tap(() => this.fetchProducts().subscribe())
     );
   }
@@ -52,7 +56,7 @@ export class EcommerceService {
   fetchCart(): Observable<CartItem[]> {
     const user = this.auth.getUser();
     if (!user) return new Observable(obs => obs.next([]));
-    return this.http.get<CartItem[]>(`${API_URL}/cart?userId=${user.id}`).pipe(
+    return this.http.get<CartItem[]>(`${this.apiUrl}/cart?userId=${user.id}`).pipe(
       tap(res => this.cartItems.set(res))
     );
   }
@@ -61,7 +65,7 @@ export class EcommerceService {
     const user = this.auth.getUser();
     if (!user) throw new Error('User not logged in');
 
-    return this.http.post<CartItem>(`${API_URL}/cart`, {
+    return this.http.post<CartItem>(`${this.apiUrl}/cart`, {
       userId: user.id,
       productId,
       size,
@@ -72,7 +76,7 @@ export class EcommerceService {
   }
 
   removeFromCart(cartItemId: string): Observable<any> {
-    return this.http.delete(`${API_URL}/cart?id=${cartItemId}`).pipe(
+    return this.http.delete(`${this.apiUrl}/cart?id=${cartItemId}`).pipe(
       tap(() => this.fetchCart().subscribe())
     );
   }
@@ -80,7 +84,7 @@ export class EcommerceService {
   fetchWishlist(): Observable<WishlistItem[]> {
     const user = this.auth.getUser();
     if (!user) return new Observable(obs => obs.next([]));
-    return this.http.get<WishlistItem[]>(`${API_URL}/wishlist?userId=${user.id}`).pipe(
+    return this.http.get<WishlistItem[]>(`${this.apiUrl}/wishlist?userId=${user.id}`).pipe(
       tap(res => this.wishlistItems.set(res))
     );
   }
@@ -89,7 +93,7 @@ export class EcommerceService {
     const user = this.auth.getUser();
     if (!user) throw new Error('User not logged in');
 
-    return this.http.post(`${API_URL}/wishlist`, {
+    return this.http.post(`${this.apiUrl}/wishlist`, {
       userId: user.id,
       productId
     }).pipe(
@@ -104,7 +108,7 @@ export class EcommerceService {
   fetchAddresses(): Observable<Address[]> {
     const user = this.auth.getUser();
     if (!user) return of([]);
-    return this.http.get<Address[]>(`${API_URL}/address?userId=${user.id}`).pipe(
+    return this.http.get<Address[]>(`${this.apiUrl}/address?userId=${user.id}`).pipe(
       tap(res => {
         let finalAddrs = [...res];
         const savedProfile = localStorage.getItem(`jhulki_profile_${user.id}`);
@@ -164,7 +168,7 @@ export class EcommerceService {
     const user = this.auth.getUser();
     if (!user) throw new Error('User not logged in');
 
-    return this.http.post<Address>(`${API_URL}/address`, {
+    return this.http.post<Address>(`${this.apiUrl}/address`, {
       ...address,
       userId: user.id
     }).pipe(
@@ -176,7 +180,7 @@ export class EcommerceService {
     const user = this.auth.getUser();
     if (!user) throw new Error('User not logged in');
 
-    return this.http.post<Order>(`${API_URL}/orders`, {
+    return this.http.post<Order>(`${this.apiUrl}/orders`, {
       userId: user.id,
       items: this.cartItems(),
       totalAmount,
@@ -193,19 +197,19 @@ export class EcommerceService {
   fetchOrders(): Observable<Order[]> {
     const user = this.auth.getUser();
     if (!user) return new Observable(obs => obs.next([]));
-    return this.http.get<Order[]>(`${API_URL}/orders?userId=${user.id}`).pipe(
+    return this.http.get<Order[]>(`${this.apiUrl}/orders?userId=${user.id}`).pipe(
       tap(res => this.orders.set(res))
     );
   }
 
   fetchAllOrders(): Observable<Order[]> {
-    return this.http.get<Order[]>(`${API_URL}/orders`).pipe(
+    return this.http.get<Order[]>(`${this.apiUrl}/orders`).pipe(
       tap(res => this.orders.set(res))
     );
   }
 
   updateOrderTracking(id: string, trackingId: string, status?: string, isBalancePaid?: boolean, expectedDeliveryDate?: string, shippedAt?: string, orderNumber?: string): Observable<Order> {
-    return this.http.patch<Order>(`${API_URL}/orders`, { id, orderNumber, trackingId, status, isBalancePaid, expectedDeliveryDate, shippedAt }).pipe(
+    return this.http.patch<Order>(`${this.apiUrl}/orders`, { id, orderNumber, trackingId, status, isBalancePaid, expectedDeliveryDate, shippedAt }).pipe(
       tap(updated => {
         this.orders.update(list => list.map(o => (o.id === id || (orderNumber && o.orderNumber === orderNumber)) ? { ...o, ...updated } : o));
       })
@@ -213,7 +217,7 @@ export class EcommerceService {
   }
 
   fetchAdminMetrics(): Observable<any> {
-    return this.http.get(`${API_URL}/admin/metrics`);
+    return this.http.get(`${this.apiUrl}/admin/metrics`);
   }
 
   isSaleActive(product: Product): boolean {
