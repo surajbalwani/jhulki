@@ -17,7 +17,7 @@ import { Alert } from '../../utils/alert.utils';
         <div class="hero-bg"></div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
-          <span class="badge-gold mb-3">AUTUMN / WINTER 2026 COLLECTION</span>
+          <span class="badge-gold mb-3">VIBRANT NAVRATRI & FESTIVE COLLECTION</span>
           <h1 class="hero-title gold-gradient-text">TIMLESS ELEGANCE & HAUTE COUTURE</h1>
           <p class="hero-subtitle">Discover handcrafted luxury garments engineered with silk, cashmere, and fine Italian leather.</p>
           <div class="hero-actions mt-4">
