@@ -44,6 +44,26 @@ h1, h2, h3, h4, .font-serif {
   letter-spacing: 0.03em;
 }
 
+/* Professional Simple Sans-Serif Typography for Product & Order Prices */
+.price,
+.item-price,
+.current-price,
+.original-price,
+.product-price,
+.total-price,
+.order-total,
+.balance-amount,
+.stat-value,
+.total-val,
+.cart-summary,
+.price-display,
+.bogo-tag {
+  font-family: var(--font-sans) !important;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -143,3 +163,65 @@ button {
   border-radius: 2px;
   font-weight: 600;
 }
+
+/* SweetAlert2 Jhulki Luxury Custom Theme */
+.jhulki-swal-popup {
+  background: #121216 !important;
+  border: 1px solid rgba(212, 175, 55, 0.3) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(212, 175, 55, 0.15) !important;
+  padding: 24px 28px !important;
+}
+
+.jhulki-swal-title {
+  font-family: var(--font-serif) !important;
+  color: #f3e5ab !important;
+  font-size: 1.5rem !important;
+  letter-spacing: 0.04em !important;
+  font-weight: 600 !important;
+}
+
+.jhulki-swal-html {
+  color: #c8c8d2 !important;
+  font-size: 0.92rem !important;
+  margin-top: 10px !important;
+}
+
+.jhulki-swal-confirm-btn {
+  background: linear-gradient(135deg, #d4af37, #aa820a) !important;
+  color: #08080a !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.12em !important;
+  font-size: 0.78rem !important;
+  padding: 10px 24px !important;
+  border-radius: 2px !important;
+  border: none !important;
+  margin: 8px 6px !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+}
+
+.jhulki-swal-confirm-btn:hover {
+  background: linear-gradient(135deg, #f3e5ab, #d4af37) !important;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4) !important;
+}
+
+.jhulki-swal-cancel-btn {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(212, 175, 55, 0.4) !important;
+  color: #d4af37 !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.12em !important;
+  font-size: 0.78rem !important;
+  padding: 10px 22px !important;
+  border-radius: 2px !important;
+  margin: 8px 6px !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+}
+
+.jhulki-swal-cancel-btn:hover {
+  background: rgba(212, 175, 55, 0.12) !important;
+  color: #fff !important;
+}
+

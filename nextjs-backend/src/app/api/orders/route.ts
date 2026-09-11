@@ -39,12 +39,17 @@ export async function POST(req: NextRequest) {
     }
 
     const orderNumber = 'JHL-' + Math.floor(100000 + Math.random() * 900000);
+    const parsedTotal = parseFloat(totalAmount);
+    const advancePaid = Math.round(parsedTotal * 0.20);
+    const balanceDue = parsedTotal - advancePaid;
 
     const order = await prisma.order.create({
       data: {
         orderNumber,
         userId,
-        totalAmount: parseFloat(totalAmount),
+        totalAmount: parsedTotal,
+        advancePaid,
+        balanceDue,
         shippingName: shippingAddress.fullName,
         shippingStreet: shippingAddress.street,
         shippingCity: shippingAddress.city,
@@ -68,6 +73,44 @@ export async function POST(req: NextRequest) {
     await prisma.cartItem.deleteMany({ where: { userId } });
 
     return NextResponse.json(order, { status: 201, headers: corsHeaders() });
+  } catch (error: any) {
+    return NextResponse.json({ error: error?.message }, { status: 500, headers: corsHeaders() });
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { id, trackingId, status, isBalancePaid } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: 'Order ID is required' }, { status: 400, headers: corsHeaders() });
+    }
+
+    const updateData: any = {};
+    if (trackingId !== undefined) updateData.trackingId = trackingId;
+    if (status !== undefined) {
+      updateData.status = status;
+      if (status === 'SHIPPED') {
+        const now = new Date();
+        const expected = new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000); // 5 days from shipping date
+        updateData.shippedAt = now;
+        updateData.expectedDeliveryDate = expected;
+      }
+    }
+    if (isBalancePaid !== undefined) updateData.isBalancePaid = isBalancePaid;
+
+    const updated = await prisma.order.update({
+      where: { id },
+      data: updateData,
+      include: {
+        items: {
+          include: { product: true },
+        },
+      },
+    });
+
+    return NextResponse.json(updated, { headers: corsHeaders() });
   } catch (error: any) {
     return NextResponse.json({ error: error?.message }, { status: 500, headers: corsHeaders() });
   }

@@ -4,6 +4,7 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { EcommerceService } from '../../services/ecommerce.service';
 import { AuthService } from '../../services/auth.service';
+import { Alert } from '../../utils/alert.utils';
 import { Product } from '../../models/ecommerce.model';
 
 @Component({
@@ -62,7 +63,7 @@ import { Product } from '../../models/ecommerce.model';
             <span class="category-tag">{{ product.category?.name || 'HAUTE COUTURE' }}</span>
             <a [routerLink]="['/product', product.id]" class="product-name font-serif">{{ product.name }}</a>
             <div class="product-price">
-              <span class="current-price font-serif">₹{{ ecommerceService.getEffectivePrice(product) }}</span>
+              <span class="current-price">₹{{ ecommerceService.getEffectivePrice(product) }}</span>
               <span class="old-price" *ngIf="ecommerceService.isSaleActive(product)">₹{{ product.price }}</span>
               <span class="sale-badge ml-auto" *ngIf="ecommerceService.isSaleActive(product)" style="font-size:0.6rem; color:#000; background:#d4af37; padding:2px 8px; border-radius:2px; font-weight:600; letter-spacing:0.05em;">
                 {{ ecommerceService.getSaleCountdownLabel(product) }}
@@ -337,7 +338,7 @@ export class ProductsComponent implements OnInit {
   toggleWishlist(event: MouseEvent, productId: string) {
     event.stopPropagation();
     if (!this.authService.isLoggedIn()) {
-      alert('Please sign in to add items to your wishlist.');
+      Alert.info('Sign In Required', 'Please sign in to add items to your wishlist.');
       return;
     }
     this.ecommerceService.toggleWishlist(productId).subscribe();

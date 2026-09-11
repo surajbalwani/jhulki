@@ -78,4 +78,9 @@ export class AuthService {
   getUser(): User | null {
     return this.currentUser();
   }
+
+  setUser(user: User) {
+    this.currentUser.set(user);
+    localStorage.setItem('jhulki_user', JSON.stringify(user));
+  }
 }

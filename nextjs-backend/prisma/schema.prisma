@@ -123,7 +123,13 @@ model Order {
   userId        String
   user          User        @relation(fields: [userId], references: [id])
   totalAmount   Float
+  advancePaid   Float?
+  balanceDue    Float?
+  isBalancePaid Boolean     @default(false)
+  shippedAt     DateTime?
+  expectedDeliveryDate DateTime?
   status        OrderStatus @default(PENDING)
+  trackingId    String?
   shippingName  String
   shippingStreet String
   shippingCity  String

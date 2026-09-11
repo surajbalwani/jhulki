@@ -73,8 +73,8 @@ export interface WishlistItem {
 
 export interface OrderItem {
   id: string;
-  productId: string;
-  product: Product;
+  productId?: string;
+  product?: Partial<Product> | any;
   size: string;
   quantity: number;
   price: number;
@@ -84,7 +84,13 @@ export interface Order {
   id: string;
   orderNumber: string;
   totalAmount: number;
+  advancePaid?: number | null;
+  balanceDue?: number | null;
+  isBalancePaid?: boolean;
+  shippedAt?: string | null;
+  expectedDeliveryDate?: string | null;
   status: 'PENDING' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+  trackingId?: string | null;
   shippingName: string;
   shippingStreet: string;
   shippingCity: string;

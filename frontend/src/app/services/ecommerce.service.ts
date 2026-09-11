@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, of, catchError } from 'rxjs';
 import { Product, CartItem, WishlistItem, Address, Order } from '../models/ecommerce.model';
 import { AuthService, API_URL } from './auth.service';
 
@@ -103,9 +103,60 @@ export class EcommerceService {
 
   fetchAddresses(): Observable<Address[]> {
     const user = this.auth.getUser();
-    if (!user) return new Observable(obs => obs.next([]));
+    if (!user) return of([]);
     return this.http.get<Address[]>(`${API_URL}/address?userId=${user.id}`).pipe(
-      tap(res => this.addresses.set(res))
+      tap(res => {
+        let finalAddrs = [...res];
+        const savedProfile = localStorage.getItem(`jhulki_profile_${user.id}`);
+        if (savedProfile) {
+          try {
+            const p = JSON.parse(savedProfile);
+            if (p.address || p.postalCode || p.phone) {
+              const profileAddr: Address = {
+                id: 'profile-saved-addr',
+                userId: user.id,
+                title: 'Profile Saved Address',
+                fullName: p.fullName || user.fullName,
+                street: p.address || 'Marine Drive',
+                city: 'Mumbai',
+                state: 'Maharashtra',
+                postalCode: p.postalCode || '400021',
+                country: 'India',
+                phone: p.phone || '+91 98201 99881',
+                isDefault: finalAddrs.length === 0
+              };
+              if (!finalAddrs.some(a => a.street === profileAddr.street && a.postalCode === profileAddr.postalCode)) {
+                finalAddrs.unshift(profileAddr);
+              }
+            }
+          } catch (e) {}
+        }
+        this.addresses.set(finalAddrs);
+      }),
+      catchError(() => {
+        const savedProfile = localStorage.getItem(`jhulki_profile_${user.id}`);
+        if (savedProfile) {
+          try {
+            const p = JSON.parse(savedProfile);
+            const profileAddr: Address = {
+              id: 'profile-saved-addr',
+              userId: user.id,
+              title: 'Profile Saved Address',
+              fullName: p.fullName || user.fullName,
+              street: p.address || 'Marine Drive',
+              city: 'Mumbai',
+              state: 'Maharashtra',
+              postalCode: p.postalCode || '400021',
+              country: 'India',
+              phone: p.phone || '+91 98201 99881',
+              isDefault: true
+            };
+            this.addresses.set([profileAddr]);
+            return of([profileAddr]);
+          } catch (e) {}
+        }
+        return of([]);
+      })
     );
   }
 
@@ -144,6 +195,20 @@ export class EcommerceService {
     if (!user) return new Observable(obs => obs.next([]));
     return this.http.get<Order[]>(`${API_URL}/orders?userId=${user.id}`).pipe(
       tap(res => this.orders.set(res))
+    );
+  }
+
+  fetchAllOrders(): Observable<Order[]> {
+    return this.http.get<Order[]>(`${API_URL}/orders`).pipe(
+      tap(res => this.orders.set(res))
+    );
+  }
+
+  updateOrderTracking(id: string, trackingId: string, status?: string, isBalancePaid?: boolean): Observable<Order> {
+    return this.http.patch<Order>(`${API_URL}/orders`, { id, trackingId, status, isBalancePaid }).pipe(
+      tap(updated => {
+        this.orders.update(list => list.map(o => o.id === id ? { ...o, ...updated } : o));
+      })
     );
   }
 

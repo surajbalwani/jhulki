@@ -41,7 +41,10 @@ import { NavbarComponent } from './shared/components/navbar/navbar.component';
         </div>
 
         <div class="footer-bottom">
-          <span>&copy; 2026 JHULKI HAUTE COUTURE. ALL RIGHTS RESERVED.</span>
+          <div class="footer-security-strip mb-2">
+            <span class="security-badge">🔒 256-BIT SSL ENCRYPTED & HTTPS SECURED PAYMENT GATEWAY</span>
+          </div>
+          <span>&copy; 2026 JHULKI HAUTE COUTURE PRIVATE LIMITED. ALL RIGHTS RESERVED. (REGISTERED ENTITY)</span>
         </div>
       </footer>
     </div>

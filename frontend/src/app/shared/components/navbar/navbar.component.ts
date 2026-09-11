@@ -12,7 +12,7 @@ import { EcommerceService } from '../../../services/ecommerce.service';
   template: `
     <!-- Top Bar Notice -->
     <div class="luxury-topbar">
-      <span>COMPLIMENTARY WORLDWIDE EXPRESS SHIPPING ON ORDERS OVER ₹5,000</span>
+      <span>COMPLIMENTARY PAN INDIA EXPRESS SHIPPING ON ORDERS OVER ₹5,000</span>
     </div>
 
     <!-- Main Navigation Bar -->
@@ -33,51 +33,59 @@ import { EcommerceService } from '../../../services/ecommerce.service';
 
         <!-- Desktop Navigation Categories -->
         <nav class="desktop-nav">
-          <a routerLink="/products" [queryParams]="{category: 'all'}" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">ALL COLLECTIONS</a>
-          <!-- MEN Dropdown (Kurta, Suits & Outerwear) -->
-          <div class="nav-dropdown-wrap">
-            <a routerLink="/products" [queryParams]="{category: 'men'}" routerLinkActive="active" class="dropdown-trigger">
-              MEN
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </a>
-            <div class="luxury-dropdown-menu">
-              <a routerLink="/products" [queryParams]="{category: 'men'}" routerLinkActive="active">ALL MEN'S</a>
-              <a routerLink="/products" [queryParams]="{category: 'kurta'}" routerLinkActive="active">HAUTE KURTA SETS</a>
+          <ng-container *ngIf="!authService.isAdmin()">
+            <a routerLink="/products" [queryParams]="{category: 'all'}" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">ALL COLLECTIONS</a>
+            <!-- MEN Dropdown (Kurta, Suits & Outerwear) -->
+            <div class="nav-dropdown-wrap">
+              <a routerLink="/products" [queryParams]="{category: 'men'}" routerLinkActive="active" class="dropdown-trigger">
+                MEN
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </a>
+              <div class="luxury-dropdown-menu">
+                <a routerLink="/products" [queryParams]="{category: 'men'}" routerLinkActive="active">ALL MEN'S</a>
+                <a routerLink="/products" [queryParams]="{category: 'kurta'}" routerLinkActive="active">HAUTE KURTA SETS</a>
+              </div>
             </div>
-          </div>
-          
-          <!-- WOMEN Dropdown (Chaniya Choli & Blouse) -->
-          <div class="nav-dropdown-wrap">
-            <a routerLink="/products" [queryParams]="{category: 'women'}" routerLinkActive="active" class="dropdown-trigger">
-              WOMEN
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </a>
-            <div class="luxury-dropdown-menu">
-              <a routerLink="/products" [queryParams]="{category: 'women'}" routerLinkActive="active">ALL WOMEN'S</a>
-              <a routerLink="/products" [queryParams]="{category: 'chaniya-choli'}" routerLinkActive="active">CHANIYA CHOLI</a>
-              <a routerLink="/products" [queryParams]="{category: 'blouse'}" routerLinkActive="active">BLOUSE & CORSETS</a>
+            
+            <!-- WOMEN Dropdown (Chaniya Choli & Blouse) -->
+            <div class="nav-dropdown-wrap">
+              <a routerLink="/products" [queryParams]="{category: 'women'}" routerLinkActive="active" class="dropdown-trigger">
+                WOMEN
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </a>
+              <div class="luxury-dropdown-menu">
+                <a routerLink="/products" [queryParams]="{category: 'women'}" routerLinkActive="active">ALL WOMEN'S</a>
+                <a routerLink="/products" [queryParams]="{category: 'chaniya-choli'}" routerLinkActive="active">CHANIYA CHOLI</a>
+                <a routerLink="/products" [queryParams]="{category: 'blouse'}" routerLinkActive="active">BLOUSE & CORSETS</a>
+              </div>
             </div>
-          </div>
 
-          <a routerLink="/products" [queryParams]="{category: 'accessories'}" routerLinkActive="active">ACCESSORIES</a>
-          
-          <!-- MORE Dropdown (Kids & Couple) -->
-          <div class="nav-dropdown-wrap">
-            <span class="dropdown-trigger">
-              MORE
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </span>
-            <div class="luxury-dropdown-menu">
-              <a routerLink="/products" [queryParams]="{category: 'kids'}" routerLinkActive="active">KIDS ATELIER</a>
-              <a routerLink="/products" [queryParams]="{category: 'couple'}" routerLinkActive="active">COUPLE SETS</a>
+            <a routerLink="/products" [queryParams]="{category: 'accessories'}" routerLinkActive="active">ACCESSORIES</a>
+            
+            <!-- MORE Dropdown (Kids & Couple) -->
+            <div class="nav-dropdown-wrap">
+              <span class="dropdown-trigger">
+                MORE
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </span>
+              <div class="luxury-dropdown-menu">
+                <a routerLink="/products" [queryParams]="{category: 'kids'}" routerLinkActive="active">KIDS ATELIER</a>
+                <a routerLink="/products" [queryParams]="{category: 'couple'}" routerLinkActive="active">COUPLE SETS</a>
+              </div>
             </div>
-          </div>
+          </ng-container>
+
+          <!-- Admin Navigation Items (Only Orders and Catalog) -->
+          <ng-container *ngIf="authService.isAdmin()">
+            <a routerLink="/admin/orders" routerLinkActive="active">ORDERS</a>
+            <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">PRODUCTS & CATALOG</a>
+          </ng-container>
         </nav>
 
         <!-- Action Icons & Profile -->
@@ -122,12 +130,50 @@ import { EcommerceService } from '../../../services/ecommerce.service';
             ADMIN PORTAL
           </a>
 
-          <!-- Profile / Auth -->
-          <a *ngIf="authService.isLoggedIn()" routerLink="/profile" class="icon-btn" title="Account Profile">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-            </svg>
-          </a>
+          <!-- Profile / Auth Dropdown -->
+          <div *ngIf="authService.isLoggedIn()" class="nav-dropdown-wrap profile-dropdown-wrap">
+            <a routerLink="/profile" class="icon-btn" title="Account Profile">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+            </a>
+            <div class="luxury-dropdown-menu profile-menu-right">
+              <div class="user-info-header">
+                <span class="user-name">{{ authService.getUser()?.fullName }}</span>
+                <span class="user-email">{{ authService.getUser()?.email }}</span>
+              </div>
+              <div class="menu-divider"></div>
+              <a routerLink="/profile">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                My Profile
+              </a>
+              <a *ngIf="!authService.isAdmin()" routerLink="/track-order" class="gold-text">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                Track Order
+              </a>
+              <a *ngIf="!authService.isAdmin()" routerLink="/wishlist">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                Wishlist
+              </a>
+              <a *ngIf="!authService.isAdmin()" routerLink="/cart">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                Shopping Bag
+              </a>
+              <a *ngIf="authService.isAdmin()" routerLink="/admin/orders" class="gold-text">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                Client Orders
+              </a>
+              <a *ngIf="authService.isAdmin()" routerLink="/admin" class="gold-text">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                Product Catalog
+              </a>
+              <div class="menu-divider"></div>
+              <button (click)="logout()" class="dropdown-logout-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Sign Out / Logout
+              </button>
+            </div>
+          </div>
 
           <a *ngIf="!authService.isLoggedIn()" routerLink="/auth" class="luxury-btn-outline nav-login-btn">
             SIGN IN
@@ -145,7 +191,7 @@ import { EcommerceService } from '../../../services/ecommerce.service';
       </div>
 
       <div class="sidebar-content">
-        <div class="sidebar-group">
+        <div class="sidebar-group" *ngIf="!authService.isAdmin()">
           <label>COLLECTIONS</label>
           <a routerLink="/products" [queryParams]="{category: 'all'}" (click)="toggleSidebar()">All Haute Couture</a>
           <a routerLink="/products" [queryParams]="{category: 'men'}" (click)="toggleSidebar()">Men's Atelier</a>
@@ -155,12 +201,18 @@ import { EcommerceService } from '../../../services/ecommerce.service';
           <a routerLink="/products" [queryParams]="{category: 'couple'}" (click)="toggleSidebar()">Couple Sets</a>
         </div>
 
+        <div class="sidebar-group" *ngIf="authService.isAdmin()">
+          <label>ATELIER ADMIN</label>
+          <a routerLink="/admin/orders" (click)="toggleSidebar()" class="gold-text">Client Orders & AWB</a>
+          <a routerLink="/admin" (click)="toggleSidebar()" class="gold-text">Inventory & Catalog</a>
+        </div>
+
         <div class="sidebar-group mt-4" *ngIf="authService.isLoggedIn()">
           <label>MY ACCOUNT</label>
           <a routerLink="/profile" (click)="toggleSidebar()">Profile & Addresses</a>
-          <a routerLink="/wishlist" (click)="toggleSidebar()">Wishlist</a>
-          <a routerLink="/cart" (click)="toggleSidebar()">Shopping Bag</a>
-          <a *ngIf="authService.isAdmin()" routerLink="/admin" (click)="toggleSidebar()" class="gold-text">Admin Dashboard</a>
+          <a *ngIf="!authService.isAdmin()" routerLink="/track-order" (click)="toggleSidebar()" class="gold-text">Track Order</a>
+          <a *ngIf="!authService.isAdmin()" routerLink="/wishlist" (click)="toggleSidebar()">Wishlist</a>
+          <a *ngIf="!authService.isAdmin()" routerLink="/cart" (click)="toggleSidebar()">Shopping Bag</a>
           <button (click)="logout(); toggleSidebar()" class="logout-btn">Sign Out</button>
         </div>
       </div>
@@ -281,6 +333,62 @@ import { EcommerceService } from '../../../services/ecommerce.service';
       opacity: 1;
       visibility: visible;
       transform: translateY(0);
+    }
+
+    .profile-dropdown-wrap {
+      position: relative;
+    }
+
+    .profile-menu-right {
+      right: 0;
+      left: auto;
+      min-width: 220px;
+    }
+
+    .user-info-header {
+      padding: 10px 18px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .user-info-header .user-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .user-info-header .user-email {
+      font-size: 0.7rem;
+      color: #888;
+      word-break: break-all;
+    }
+
+    .menu-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+      margin: 6px 0;
+    }
+
+    .dropdown-logout-btn {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: none;
+      color: #ff6b6b;
+      padding: 10px 18px;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      transition: var(--transition-smooth);
+    }
+
+    .dropdown-logout-btn:hover {
+      background: rgba(255, 107, 107, 0.12);
+      color: #ff8787;
     }
 
     .luxury-dropdown-menu a {

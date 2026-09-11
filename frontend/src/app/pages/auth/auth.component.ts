@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { Alert } from '../../utils/alert.utils';
 
 @Component({
   selector: 'app-auth',
@@ -177,7 +178,7 @@ export class AuthComponent {
 
   onSubmit() {
     if (!this.email || !this.password) {
-      alert('Please fill in email and password.');
+      Alert.warning('Required Fields Missing', 'Please fill in email and password.');
       return;
     }
 
@@ -187,7 +188,7 @@ export class AuthComponent {
       this.authService.login({ email: this.email, password: this.password }).subscribe({
         next: (res) => {
           this.loading.set(false);
-          alert(`Welcome back, ${res.user.fullName}!`);
+          Alert.success('Welcome Back', `Welcome back, ${res.user.fullName}!`);
           if (res.user.role === 'ADMIN' || res.user.role === 'SUPER_ADMIN') {
             this.router.navigate(['/admin']);
           } else {
@@ -196,12 +197,12 @@ export class AuthComponent {
         },
         error: (err) => {
           this.loading.set(false);
-          alert(err?.error?.error || 'Authentication failed');
+          Alert.error('Authentication Failed', err?.error?.error || 'Invalid credentials. Please try again.');
         }
       });
     } else {
       if (!this.fullName) {
-        alert('Please enter your full name.');
+        Alert.warning('Required Field', 'Please enter your full name.');
         this.loading.set(false);
         return;
       }
@@ -213,12 +214,12 @@ export class AuthComponent {
       }).subscribe({
         next: (res) => {
           this.loading.set(false);
-          alert(`Account created successfully for ${res.user.fullName}!`);
+          Alert.success('Account Created', `Account created successfully for ${res.user.fullName}!`);
           this.router.navigate(['/']);
         },
         error: (err) => {
           this.loading.set(false);
-          alert(err?.error?.error || 'Signup failed');
+          Alert.error('Registration Failed', err?.error?.error || 'Signup failed');
         }
       });
     }

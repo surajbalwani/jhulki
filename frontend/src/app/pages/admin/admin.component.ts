@@ -2,9 +2,10 @@ import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
-import { EcommerceService } from '../../services/ecommerce.service';
 import { AuthService } from '../../services/auth.service';
+import { EcommerceService } from '../../services/ecommerce.service';
 import { Product } from '../../models/ecommerce.model';
+import { Alert } from '../../utils/alert.utils';
 
 @Component({
   selector: 'app-admin',
@@ -44,19 +45,19 @@ import { Product } from '../../models/ecommerce.model';
       <div class="stats-grid mt-5 mb-5" *ngIf="metrics()">
         <div class="stat-card glass-card">
           <span class="stat-title">TOTAL REVENUE</span>
-          <span class="stat-value font-serif gold-text">₹{{ metrics()?.totalRevenue | number:'1.2-2' }}</span>
+          <span class="stat-value gold-text">₹{{ metrics()?.totalRevenue | number:'1.2-2' }}</span>
         </div>
         <div class="stat-card glass-card">
           <span class="stat-title">HAUTE PRODUCTS</span>
-          <span class="stat-value font-serif">{{ metrics()?.totalProducts }}</span>
+          <span class="stat-value">{{ metrics()?.totalProducts }}</span>
         </div>
         <div class="stat-card glass-card">
           <span class="stat-title">REGISTERED CLIENTS</span>
-          <span class="stat-value font-serif">{{ metrics()?.totalUsers }}</span>
+          <span class="stat-value">{{ metrics()?.totalUsers }}</span>
         </div>
         <div class="stat-card glass-card">
           <span class="stat-title">TOTAL ORDERS</span>
-          <span class="stat-value font-serif">{{ metrics()?.totalOrders }}</span>
+          <span class="stat-value">{{ metrics()?.totalOrders }}</span>
         </div>
       </div>
 
@@ -759,8 +760,9 @@ export class AdminComponent implements OnInit {
 
   ngOnInit() {
     if (!this.authService.isAdmin()) {
-      alert('Access restricted to Admin role.');
-      this.router.navigate(['/']);
+      Alert.error('Access Restricted', 'Access restricted to Admin role.').then(() => {
+        this.router.navigate(['/']);
+      });
       return;
     }
 
@@ -802,7 +804,7 @@ export class AdminComponent implements OnInit {
       next: (updated) => {
         this.products.update(list => list.map(p => p.id === updated.id ? { ...p, isBogoEnabled: updated.isBogoEnabled } : p));
       },
-      error: (err) => alert(err?.error?.error || 'Failed to update BOGO status')
+      error: (err) => Alert.error('BOGO Update Failed', err?.error?.error || 'Failed to update BOGO status')
     });
   }
 
@@ -892,11 +894,15 @@ export class AdminComponent implements OnInit {
     this.formData.stock.splice(index, 1);
   }
 
-  deleteProduct(id: string) {
-    if (confirm('Are you sure you want to delete this product?')) {
+  async deleteProduct(id: string) {
+    const confirmed = await Alert.confirm('Delete Product', 'Are you sure you want to delete this product?', 'DELETE');
+    if (confirmed) {
       this.ecommerceService.deleteProduct(id).subscribe({
-        next: () => this.loadData(),
-        error: (err) => alert(err?.error?.error || 'Failed to delete')
+        next: () => {
+          Alert.success('Deleted', 'Product deleted successfully.');
+          this.loadData();
+        },
+        error: (err) => Alert.error('Delete Failed', err?.error?.error || 'Failed to delete')
       });
     }
   }
@@ -912,17 +918,19 @@ export class AdminComponent implements OnInit {
       this.ecommerceService.updateProduct(this.editingProductId, payload).subscribe({
         next: () => {
           this.showModal.set(false);
+          Alert.success('Updated', 'Product details updated successfully.');
           this.loadData();
         },
-        error: (err) => alert(err?.error?.error || 'Update failed')
+        error: (err) => Alert.error('Update Failed', err?.error?.error || 'Update failed')
       });
     } else {
       this.ecommerceService.createProduct(payload).subscribe({
         next: () => {
           this.showModal.set(false);
+          Alert.success('Product Created', 'New product added to catalog successfully.');
           this.loadData();
         },
-        error: (err) => alert(err?.error?.error || 'Creation failed')
+        error: (err) => Alert.error('Creation Failed', err?.error?.error || 'Creation failed')
       });
     }
   }
