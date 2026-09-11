@@ -382,6 +382,110 @@ async function main() {
       stock: [
         { size: 'Free Size', quantity: 15 },
       ]
+    },
+    {
+      name: 'Aura Emerald Hand-Embroidered Chaniya Choli Set',
+      slug: 'aura-emerald-hand-embroidered-chaniya-choli-set',
+      description: 'Handcrafted emerald green silk chaniya choli set embellished with traditional Kutchi mirrorwork and gold zari border.',
+      price: 3200.00,
+      salePrice: 2899.00,
+      images: ['/products/new-women/nw-1.jpeg', '/products/new-women/nw-2.jpeg', '/products/new-women/nw-3.jpeg'],
+      categorySlug: 'chaniya-choli',
+      isFeatured: true,
+      isBogoEnabled: true,
+      stock: [{ size: 'Free Size', quantity: 15 }]
+    },
+    {
+      name: 'Blush Pink Mirrorwork Zari Chaniya Choli Set',
+      slug: 'blush-pink-mirrorwork-zari-chaniya-choli-set',
+      description: 'Soft blush pink silk chaniya choli with mirrorwork corset blouse and high-flared pleated skirt.',
+      price: 3499.00,
+      salePrice: 3199.00,
+      images: ['/products/new-women/nw-4.jpeg', '/products/new-women/nw-5.jpeg', '/products/new-women/nw-6.jpeg'],
+      categorySlug: 'chaniya-choli',
+      isFeatured: true,
+      isBogoEnabled: true,
+      stock: [{ size: 'Free Size', quantity: 15 }]
+    },
+    {
+      name: 'Maroon Velvet Royal Kutchi Chaniya Choli Set',
+      slug: 'maroon-velvet-royal-kutchi-chaniya-choli-set',
+      description: 'Royal maroon velvet choli blouse paired with Kutchi mirrorwork flared lehenga and bandhani dupatta.',
+      price: 3699.00,
+      salePrice: 3299.00,
+      images: ['/products/new-women/nw-7.jpeg', '/products/new-women/nw-8.jpeg', '/products/new-women/nw-9.jpeg'],
+      categorySlug: 'chaniya-choli',
+      isFeatured: true,
+      stock: [{ size: 'Free Size', quantity: 15 }]
+    },
+    {
+      name: 'Royal Sapphire Blue Bandhani Chaniya Choli Set',
+      slug: 'royal-sapphire-blue-bandhani-chaniya-choli-set',
+      description: 'Sapphire blue Gajji silk chaniya choli set adorned with gold bandhani prints and traditional mirror tassels.',
+      price: 3899.00,
+      salePrice: 3499.00,
+      images: ['/products/new-women/nw-10.jpeg', '/products/new-women/nw-11.jpeg', '/products/new-women/nw-12.jpeg'],
+      categorySlug: 'chaniya-choli',
+      isFeatured: true,
+      isBogoEnabled: true,
+      stock: [{ size: 'Free Size', quantity: 15 }]
+    },
+    {
+      name: 'Mustard Yellow Festive Garba Chaniya Choli Set',
+      slug: 'mustard-yellow-festive-garba-chaniya-choli-set',
+      description: 'Vibrant mustard yellow flared cotton lehenga with elephant motifs and vibrant multi-color Kutchi border.',
+      price: 3999.00,
+      salePrice: 3599.00,
+      images: ['/products/new-women/nw-13.jpeg', '/products/new-women/nw-14.jpeg', '/products/new-women/nw-15.jpeg'],
+      categorySlug: 'chaniya-choli',
+      isFeatured: true,
+      stock: [{ size: 'Free Size', quantity: 15 }]
+    },
+    {
+      name: 'Crimson Red Heritage Patchwork Chaniya Choli Set',
+      slug: 'crimson-red-heritage-patchwork-chaniya-choli-set',
+      description: 'Classic crimson red silk choli paired with geometric Rabari patchwork skirt and tissue gold zari drape.',
+      price: 4199.00,
+      salePrice: 3799.00,
+      images: ['/products/new-women/nw-16.jpeg', '/products/new-women/nw-17.jpeg', '/products/new-women/nw-18.jpeg'],
+      categorySlug: 'chaniya-choli',
+      isFeatured: true,
+      isBogoEnabled: true,
+      stock: [{ size: 'Free Size', quantity: 15 }]
+    },
+    {
+      name: 'Ivory Pearl Embroidered Corset Chaniya Choli Set',
+      slug: 'ivory-pearl-embroidered-corset-chaniya-choli-set',
+      description: 'Pristine ivory sweetheart corset choli with pearl drop embroidery and high-flare knife pleated lehenga.',
+      price: 4299.00,
+      salePrice: 3899.00,
+      images: ['/products/new-women/nw-19.jpeg', '/products/new-women/nw-20.jpeg', '/products/new-women/nw-21.jpeg'],
+      categorySlug: 'chaniya-choli',
+      isFeatured: true,
+      stock: [{ size: 'Free Size', quantity: 15 }]
+    },
+    {
+      name: 'Teal Blue Mirrorwork Pleated Chaniya Choli Set',
+      slug: 'teal-blue-mirrorwork-pleated-chaniya-choli-set',
+      description: 'Royal teal blue silk flared chaniya choli with arch-motif mirrorwork hem and matching drape.',
+      price: 4499.00,
+      salePrice: 3999.00,
+      images: ['/products/new-women/nw-22.jpeg', '/products/new-women/nw-23.jpeg', '/products/new-women/nw-24.jpeg'],
+      categorySlug: 'chaniya-choli',
+      isFeatured: true,
+      isBogoEnabled: true,
+      stock: [{ size: 'Free Size', quantity: 15 }]
+    },
+    {
+      name: 'Deep Plum Floral Jacquard Chaniya Choli Set',
+      slug: 'deep-plum-floral-jacquard-chaniya-choli-set',
+      description: 'Deep plum silk choli with jacquard floral motifs and wide gold zari hem border.',
+      price: 4500.00,
+      salePrice: 3999.00,
+      images: ['/products/new-women/nw-25.jpeg', '/products/new-women/nw-26.jpeg', '/products/new-women/nw-27.jpeg'],
+      categorySlug: 'chaniya-choli',
+      isFeatured: true,
+      stock: [{ size: 'Free Size', quantity: 15 }]
     }
   ];
 
