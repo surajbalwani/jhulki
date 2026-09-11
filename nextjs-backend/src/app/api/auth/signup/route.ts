@@ -4,6 +4,8 @@ import bcrypt from 'bcryptjs';
 import { signToken } from '@/lib/jwt';
 import { corsHeaders, handleCors } from '@/lib/cors';
 
+export const dynamic = 'force-dynamic';
+
 export async function OPTIONS() {
   return handleCors();
 }
