@@ -45,39 +45,33 @@ Both of these were introduced by the original author (`utsavpal`) in a rapid
 sequence of commits shortly before the fork (10 commits in ~12 minutes, all titled
 `fix(prisma): ...`), evidently while debugging a Vercel/Supabase connection issue.
 Setting Vercel project env vars would currently have **no effect** on the database
-connection, since the code path ignores them. This is flagged as a known issue
-below rather than silently worked around.
+connection, since the code path ignores them.
 
-## Known Issue: Database connection is broken
+## Resolved Issue: Database connection (was broken, now fixed)
 
-`GET /api/products` on the deployed backend currently returns:
+`GET /api/products` and any Prisma-backed route (`/api/auth/login`, etc.)
+originally returned:
 
 ```
 500 { "error": "\nInvalid `prisma.product.findMany()` invocation:\n\nError querying the database: FATAL: (ENOTFOUND) tenant/user postgres.oejbnxhrxfrwppozaphg not found" }
 ```
 
-Diagnosis:
-- The Supabase project (`oejbnxhrxfrwppozaphg`) itself is alive — its REST endpoint
-  (`https://oejbnxhrxfrwppozaphg.supabase.co/rest/v1/`) returns a normal 401
-  (missing API key), not a "project paused" page.
-- The failure is specific to the Postgres **connection pooler** hostname hardcoded
-  in `prisma.ts`: `aws-0-ap-south-1.pooler.supabase.com`. "Tenant or user not
-  found" from Supabase's pooler is almost always caused by hitting the **wrong
-  region's pooler** for that project ref.
-- This is inherited from the original repo, not introduced by this fork — the
-  original author's own deployment is presumably hitting the same error, which
-  explains the failed troubleshooting commit spree.
+Diagnosis: the Supabase project (`oejbnxhrxfrwppozaphg`) itself was alive — its
+REST endpoint returned a normal 401 (missing API key), not a "project paused"
+page. The failure was specific to the Postgres **connection pooler** region
+hardcoded in `prisma.ts`: `aws-0-ap-south-1.pooler.supabase.com`. This is
+inherited from the original repo (the last 10 commits before the fork were all
+`fix(prisma): ...` attempts at this exact error, none of which worked).
 
-**This blocks real functionality**: signup/login/products/cart/orders all touch
-the database, so they will 500 until this is fixed. Static pages and routing work
-fine.
+**Fix**: Utsav confirmed the actual pooler connection string from his Supabase
+dashboard (Project Settings → Database → Connection pooling) — the correct region
+is `ap-northeast-2`, not `ap-south-1`. Updated `VERIFIED_POOLER_URL` in
+`nextjs-backend/src/lib/prisma.ts` accordingly (commit `1caf2af`) and pushed to
+`main`, which triggered an automatic redeploy.
 
-**Fix requires access to the Supabase project itself** (to read the actual region
-under Project Settings → Database → Connection pooling) — something only Utsav
-can check, since it's his Supabase account. Once the correct pooler region (or a
-regenerated connection string) is known, update `VERIFIED_POOLER_URL` in
-`nextjs-backend/src/lib/prisma.ts` and push — both Vercel projects redeploy
-automatically on push to `main`.
+**Verified working** post-fix: `GET https://jhulki-backend-psi.vercel.app/api/products`
+returns 200 with real seeded product data (Jhulki's actual catalog). Signup/login
+routes also route correctly (no more DB tenant errors).
 
 ## Frontend → Backend wiring
 
@@ -103,6 +97,5 @@ an environment variable, not a source-controlled literal.
 - ✅ Frontend serves correctly (200, Angular shell renders).
 - ✅ Frontend now points at the correct backend URL for this fork.
 - ✅ CORS allows cross-origin requests from frontend to backend.
-- ❌ Any endpoint touching the database 500s due to a broken Supabase pooler
-  connection string inherited from upstream — needs Utsav to confirm the
-  correct region/connection string from his Supabase dashboard.
+- ✅ Database connection fixed (correct Supabase pooler region) — `/api/products`
+  confirmed returning real data end-to-end.
