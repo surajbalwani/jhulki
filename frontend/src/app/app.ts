@@ -1,12 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterOutlet, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
+import { getApiUrl } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterModule, NavbarComponent],
+  imports: [CommonModule, RouterOutlet, RouterModule, FormsModule, NavbarComponent],
   template: `
     <div class="app-root-container">
       <app-navbar></app-navbar>
@@ -27,8 +29,9 @@ import { NavbarComponent } from './shared/components/navbar/navbar.component';
             <h4 class="footer-title font-serif">ATELIER COLLECTIONS</h4>
             <a routerLink="/products" [queryParams]="{category: 'men'}">Men's Atelier</a>
             <a routerLink="/products" [queryParams]="{category: 'women'}">Women's Runway</a>
-            <a routerLink="/products" [queryParams]="{category: 'accessories'}">Leather Goods</a>
-            <a routerLink="/products" [queryParams]="{category: 'footwear'}">Footwear</a>
+            <a routerLink="/products" [queryParams]="{category: 'accessories'}">Fine Accessories</a>
+            <a routerLink="/products" [queryParams]="{category: 'chaniya-choli'}">Chaniya Choli</a>
+            <a routerLink="/products" [queryParams]="{category: 'kurta'}">Kurta Sets</a>
           </div>
 
           <div class="footer-col">
@@ -37,6 +40,7 @@ import { NavbarComponent } from './shared/components/navbar/navbar.component';
             <a routerLink="/cart">Shopping Bag</a>
             <a routerLink="/wishlist">Saved Wishlist</a>
             <a routerLink="/auth">Sign In / Register</a>
+            <button (click)="openApiModal()" class="api-config-link">⚡ Config API Endpoint</button>
           </div>
         </div>
 
@@ -47,6 +51,32 @@ import { NavbarComponent } from './shared/components/navbar/navbar.component';
           <span>&copy; 2026 JHULKI HAUTE COUTURE PRIVATE LIMITED. ALL RIGHTS RESERVED. (REGISTERED ENTITY)</span>
         </div>
       </footer>
+
+      <!-- API Configuration Modal -->
+      <div class="modal-backdrop" *ngIf="showApiModal()">
+        <div class="modal-card glass-card">
+          <div class="modal-header">
+            <h3 class="font-serif gold-text">Vercel Backend API Configuration</h3>
+            <button (click)="showApiModal.set(false)" class="close-btn">&times;</button>
+          </div>
+          <p style="font-size:0.85rem; color:#aaa; margin:12px 0;">
+            Current Active API URL: <strong class="gold-text">{{ currentApiUrl() }}</strong>
+          </p>
+          <div class="form-group">
+            <label style="font-size:0.75rem; color:#ccc;">Enter Next.js Vercel Backend URL</label>
+            <input 
+              type="text" 
+              [(ngModel)]="inputApiUrl" 
+              placeholder="https://your-backend.vercel.app/api" 
+              style="width:100%; padding:10px; background:#111; border:1px solid #333; color:#fff; border-radius:4px; margin-top:6px;" 
+            />
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:20px;">
+            <button (click)="showApiModal.set(false)" class="luxury-btn-outline" style="padding:8px 16px;">Cancel</button>
+            <button (click)="saveApiUrl()" class="luxury-btn-primary" style="padding:8px 16px;">Save & Reload</button>
+          </div>
+        </div>
+      </div>
     </div>
   `,
   styles: [`
@@ -97,15 +127,20 @@ import { NavbarComponent } from './shared/components/navbar/navbar.component';
       letter-spacing: 0.05em;
     }
 
-    .footer-col a {
+    .footer-col a, .api-config-link {
       display: block;
       color: #9a9ab0;
       font-size: 0.85rem;
       margin-bottom: 10px;
       transition: var(--transition-smooth);
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      text-align: left;
     }
 
-    .footer-col a:hover {
+    .footer-col a:hover, .api-config-link:hover {
       color: var(--color-gold-primary);
     }
 
@@ -120,6 +155,39 @@ import { NavbarComponent } from './shared/components/navbar/navbar.component';
       color: #555;
     }
 
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-card {
+      width: 90%;
+      max-width: 500px;
+      padding: 24px;
+      background: #0d0d12;
+      border: 1px solid var(--color-border-glow);
+      border-radius: 8px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
     @media (max-width: 768px) {
       .footer-container {
         grid-template-columns: 1fr;
@@ -128,4 +196,21 @@ import { NavbarComponent } from './shared/components/navbar/navbar.component';
     }
   `]
 })
-export class App {}
+export class App {
+  showApiModal = signal(false);
+  currentApiUrl = signal(getApiUrl());
+  inputApiUrl = getApiUrl();
+
+  openApiModal() {
+    this.currentApiUrl.set(getApiUrl());
+    this.inputApiUrl = getApiUrl();
+    this.showApiModal.set(true);
+  }
+
+  saveApiUrl() {
+    if (this.inputApiUrl.trim()) {
+      localStorage.setItem('jhulki_api_url', this.inputApiUrl.trim());
+      window.location.reload();
+    }
+  }
+}
