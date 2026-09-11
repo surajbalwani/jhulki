@@ -10,8 +10,8 @@ export function getApiUrl(): string {
     if (saved) return saved.endsWith('/') ? saved.slice(0, -1) : saved;
 
     if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-      // In live production, point to Vercel Next.js API backend domain
-      return 'https://jhulki-backend.vercel.app/api';
+      // In live Vercel production, return relative /api so frontend vercel.json proxies seamlessly to backend
+      return window.location.origin + '/api';
     }
   }
   return 'http://localhost:5292/api';
