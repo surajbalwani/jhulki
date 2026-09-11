@@ -127,8 +127,8 @@ import { Alert } from '../../utils/alert.utils';
     .hero-bg {
       position: absolute;
       inset: 0;
-      background: url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1920') center/cover no-repeat;
-      filter: brightness(0.4) saturate(1.2);
+      background: url('/images/hero-chaniya-choli-racks.jpg') center/cover no-repeat;
+      filter: brightness(0.45) saturate(1.2);
       transform: scale(1.05);
       transition: transform 10s ease;
     }
