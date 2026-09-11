@@ -94,19 +94,24 @@ import { Alert } from '../../utils/alert.utils';
           </div>
 
           <!-- Total / Payable Breakdown -->
-          <div class="summary-row total-row" *ngIf="paymentScheme === '20_PERCENT'">
+          <div class="summary-row" style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px; margin-top: 12px;">
+            <span style="font-size: 0.9rem; color: #aaa;">Total Order Amount:</span>
+            <span class="price-val" style="font-size: 1.25rem; color: #f3e5ab; font-weight: 700;">₹{{ summary().finalTotal | number:'1.2-2' }}</span>
+          </div>
+
+          <div class="summary-row total-row" *ngIf="paymentScheme === '20_PERCENT'" style="margin-top: 10px; background: rgba(212, 175, 55, 0.08); padding: 12px; border-radius: 6px; border: 1px solid rgba(212, 175, 55, 0.25);">
             <div>
-              <span style="display:block; font-size:0.7rem; letter-spacing:0.1em; color:#888;">PAY TODAY (20% ADVANCE)</span>
-              <span class="total-price">₹{{ getPayableToday() | number:'1.2-2' }}</span>
+              <span style="display:block; font-size:0.68rem; letter-spacing:0.1em; color:#ffb703;">PAY TODAY (20% ADVANCE)</span>
+              <span class="total-price" style="font-size: 1.4rem;">₹{{ getPayableToday() | number:'1.2-2' }}</span>
             </div>
             <div style="text-align:right;">
-              <span style="display:block; font-size:0.7rem; letter-spacing:0.1em; color:#888;">BALANCE AFTER AWB (80%)</span>
-              <span class="gold-text price-val" style="font-size:1.2rem;">₹{{ getRemainingBalance() | number:'1.2-2' }}</span>
+              <span style="display:block; font-size:0.68rem; letter-spacing:0.1em; color:#aaa;">BALANCE AFTER AWB (80%)</span>
+              <span class="gold-text price-val" style="font-size:1.2rem; display:block; margin-top:2px;">₹{{ getRemainingBalance() | number:'1.2-2' }}</span>
             </div>
           </div>
 
-          <div class="summary-row total-row" *ngIf="paymentScheme === 'FULL'">
-            <span>Estimated Total</span>
+          <div class="summary-row total-row" *ngIf="paymentScheme === 'FULL'" style="margin-top: 10px;">
+            <span>Pay Today (100% Full Payment)</span>
             <span class="total-price">₹{{ summary().finalTotal | number:'1.2-2' }}</span>
           </div>
 
@@ -627,12 +632,13 @@ export class CartComponent implements OnInit {
       return;
     }
 
-    const finalAmount = this.getPayableAmount();
+    const fullTotalAmount = this.summary().finalTotal;
+    const finalAmountPaidToday = this.getPayableAmount();
     const schemeLabel = this.paymentScheme === '20_PERCENT' ? '20% Advance Booking' : '100% Full Payment';
     const methodString = `Prepaid UPI (UTR: ${this.utrNumber.trim()}) - ${schemeLabel}`;
 
     this.isProcessing.set(true);
-    this.ecommerceService.checkoutOrder(finalAmount, address, methodString).subscribe({
+    this.ecommerceService.checkoutOrder(fullTotalAmount, address, methodString).subscribe({
       next: (order) => {
         this.isProcessing.set(false);
         this.showPaymentModal.set(false);
@@ -640,14 +646,14 @@ export class CartComponent implements OnInit {
         if (this.paymentScheme === '20_PERCENT') {
           Alert.success(
             'UPI Payment Received & Order Placed!',
-            `Transaction Ref ID: ${this.utrNumber.trim()}\n\nOrder #${order.orderNumber} successfully registered with ₹${finalAmount.toLocaleString()} advance booking.\n\nProduct verification & Delhivery AWB assignment will occur within 2 days. Track live status anytime in your Profile / Track Order.`
+            `Transaction Ref ID: ${this.utrNumber.trim()}\n\nOrder #${order.orderNumber} successfully registered with ₹${finalAmountPaidToday.toLocaleString()} advance booking.\n\nProduct verification & Delhivery AWB assignment will occur within 2 days. Track live status anytime in your Profile / Track Order.`
           ).then(() => {
             this.router.navigate(['/track-order']);
           });
         } else {
           Alert.success(
             'UPI Payment Received!',
-            `Transaction Ref ID: ${this.utrNumber.trim()}\n\nThank you! Order #${order.orderNumber} (₹${finalAmount.toLocaleString()}) has been confirmed.`
+            `Transaction Ref ID: ${this.utrNumber.trim()}\n\nThank you! Order #${order.orderNumber} (₹${fullTotalAmount.toLocaleString()}) has been confirmed.`
           ).then(() => {
             this.router.navigate(['/track-order']);
           });

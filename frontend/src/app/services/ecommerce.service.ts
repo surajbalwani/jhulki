@@ -204,10 +204,10 @@ export class EcommerceService {
     );
   }
 
-  updateOrderTracking(id: string, trackingId: string, status?: string, isBalancePaid?: boolean): Observable<Order> {
-    return this.http.patch<Order>(`${API_URL}/orders`, { id, trackingId, status, isBalancePaid }).pipe(
+  updateOrderTracking(id: string, trackingId: string, status?: string, isBalancePaid?: boolean, expectedDeliveryDate?: string, shippedAt?: string, orderNumber?: string): Observable<Order> {
+    return this.http.patch<Order>(`${API_URL}/orders`, { id, orderNumber, trackingId, status, isBalancePaid, expectedDeliveryDate, shippedAt }).pipe(
       tap(updated => {
-        this.orders.update(list => list.map(o => o.id === id ? { ...o, ...updated } : o));
+        this.orders.update(list => list.map(o => (o.id === id || (orderNumber && o.orderNumber === orderNumber)) ? { ...o, ...updated } : o));
       })
     );
   }

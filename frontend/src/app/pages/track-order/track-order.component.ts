@@ -120,9 +120,27 @@ import { Alert } from '../../utils/alert.utils';
             </div>
           </div>
 
-          <div class="order-footer mt-3">
-            <span>Total Order Amount:</span>
-            <span class="order-total">₹{{ order.totalAmount | number:'1.2-2' }}</span>
+          <!-- Order Summary Footer with Breakdown -->
+          <div class="order-footer-breakdown mt-3">
+            <div class="footer-row" *ngIf="getBogoDiscountAmount(order) > 0">
+              <span class="sub-label gold-text">🎁 BOGO SPECIAL DISCOUNT APPLIED:</span>
+              <span class="val gold-text">- ₹{{ getBogoDiscountAmount(order) | number:'1.2-2' }}</span>
+            </div>
+            
+            <div class="footer-main-row">
+              <div class="footer-col">
+                <span class="f-label">TOTAL ORDER AMOUNT:</span>
+                <span class="f-val total-highlight">₹{{ order.totalAmount | number:'1.2-2' }}</span>
+              </div>
+              <div class="footer-col">
+                <span class="f-label">ADVANCE PAID (20%):</span>
+                <span class="f-val green-highlight">₹{{ getAdvancePaidAmount(order) | number:'1.2-2' }}</span>
+              </div>
+              <div class="footer-col">
+                <span class="f-label">BALANCE DUE (80%):</span>
+                <span class="f-val gold-highlight">₹{{ getBalanceDueAmount(order) | number:'1.2-2' }}</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -448,21 +466,51 @@ import { Alert } from '../../utils/alert.utils';
       color: #d4af37;
     }
 
-    .order-footer {
+    .order-footer-breakdown {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 16px;
+    }
+
+    .footer-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding-top: 14px;
-      font-size: 0.9rem;
-      color: #aaa;
+      margin-bottom: 10px;
+      font-size: 0.82rem;
     }
 
-    .order-total {
-      font-size: 1.25rem;
-      color: #f3e5ab;
-      font-weight: 700;
+    .footer-main-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 14px 18px;
+      border-radius: 6px;
+      border: 1px solid rgba(212, 175, 55, 0.2);
     }
+
+    .footer-col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .f-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      color: #888;
+    }
+
+    .f-val {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .total-highlight { color: #f3e5ab; }
+    .green-highlight { color: #34c759; }
+    .gold-highlight { color: #d4af37; }
 
     .no-orders {
       text-align: center;
@@ -649,63 +697,31 @@ export class TrackOrderComponent implements OnInit {
   }
 
   getDisplayOrders() {
-    const dbOrders = this.ecommerceService.orders();
-    let orders = dbOrders && dbOrders.length > 0 ? dbOrders : [
-      {
-        id: 'demo-cust-order',
-        orderNumber: 'JHL-894102',
-        createdAt: new Date().toISOString(),
-        shippedAt: new Date(Date.now() - 2 * 3600 * 1000).toISOString(),
-        totalAmount: 4999.00,
-        advancePaid: 999.80,
-        balanceDue: 3999.20,
-        isBalancePaid: false,
-        status: 'SHIPPED' as const,
-        trackingId: 'AWB984712049IN',
-        shippingName: this.authService.getUser()?.fullName || 'Sophia Laurent',
-        shippingStreet: '14 Marine Drive Luxury Tower',
-        shippingCity: 'Mumbai',
-        shippingState: 'Maharashtra',
-        shippingZip: '400021',
-        shippingPhone: '+91 98201 99881',
-        paymentMethod: 'Prepaid (20% Advance)',
-        items: [
-          {
-            id: 'item-demo',
-            productId: 'demo-p1',
-            size: 'Free Size',
-            quantity: 1,
-            price: 4999.00,
-            product: {
-              name: 'Jhulki First Edition Chaniya Choli set',
-              images: ['/products/chaniya-choli/full.jpg']
-            }
-          }
-        ]
-      }
-    ];
+    const dbOrders = this.ecommerceService.orders() || [];
+    return this.applyLocalOverrides(dbOrders);
+  }
 
+  private applyLocalOverrides(orders: any[]): any[] {
     const raw = localStorage.getItem('jhulki_admin_orders_overrides');
-    if (raw) {
-      try {
-        const overrides: Record<string, any> = JSON.parse(raw);
-        orders = orders.map(o => {
-          const ov = overrides[o.id] || overrides[o.orderNumber];
-          if (ov) {
-            return {
-              ...o,
-              trackingId: ov.trackingId !== undefined ? ov.trackingId : o.trackingId,
-              status: ov.status !== undefined ? ov.status : o.status,
-              shippedAt: ov.shippedAt !== undefined ? ov.shippedAt : o.shippedAt,
-              expectedDeliveryDate: ov.expectedDeliveryDate !== undefined ? ov.expectedDeliveryDate : o.expectedDeliveryDate
-            };
-          }
-          return o;
-        });
-      } catch (e) {}
+    if (!raw) return orders;
+    try {
+      const overrides: Record<string, any> = JSON.parse(raw);
+      return orders.map(o => {
+        const ov = overrides[o.id] || overrides[o.orderNumber];
+        if (ov) {
+          return {
+            ...o,
+            trackingId: ov.trackingId !== undefined ? ov.trackingId : o.trackingId,
+            status: ov.status !== undefined ? ov.status : o.status,
+            shippedAt: ov.shippedAt !== undefined ? ov.shippedAt : o.shippedAt,
+            expectedDeliveryDate: ov.expectedDeliveryDate !== undefined ? ov.expectedDeliveryDate : o.expectedDeliveryDate
+          };
+        }
+        return o;
+      });
+    } catch (e) {
+      return orders;
     }
-
-    return orders;
   }
 
   getExpectedDeliveryDate(order: any): string {
@@ -728,9 +744,20 @@ export class TrackOrderComponent implements OnInit {
     return `${hours}h ${mins}m ${secs}s`;
   }
 
+  getAdvancePaidAmount(order: any): number {
+    if (order.advancePaid) return order.advancePaid;
+    return Math.round(order.totalAmount * 0.20);
+  }
+
+  getBogoDiscountAmount(order: any): number {
+    if (!order.items || order.items.length < 2) return 0;
+    const itemTotalSum = order.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
+    return Math.max(0, itemTotalSum - order.totalAmount);
+  }
+
   getBalanceDueAmount(order: any): number {
     if (order.balanceDue) return order.balanceDue;
-    return Math.round(order.totalAmount * 0.80);
+    return order.totalAmount - this.getAdvancePaidAmount(order);
   }
 
   getUpiQrUrl(order: any): string {

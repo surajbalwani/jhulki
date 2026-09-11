@@ -113,8 +113,25 @@ import { Alert } from '../../utils/alert.utils';
             </span>
           </div>
 
-          <!-- AWB Tracking ID Insertion & Status Update -->
+          <!-- Status Select (Left) & AWB Tracking (Right) -->
           <div class="awb-control-footer mt-4">
+            <!-- Left: Status Dropdown -->
+            <div class="status-select-wrap">
+              <label class="awb-label font-serif">ORDER STATUS:</label>
+              <select 
+                [ngModel]="order.status" 
+                (ngModelChange)="onStatusChange(order, $event)" 
+                class="status-select"
+              >
+                <option value="PENDING">PENDING</option>
+                <option value="PROCESSING">PROCESSING</option>
+                <option value="SHIPPED">SHIPPED</option>
+                <option value="DELIVERED">DELIVERED</option>
+                <option value="CANCELLED">CANCELLED</option>
+              </select>
+            </div>
+
+            <!-- Right: AWB Field + Save AWB Button (Disabled until status is SHIPPED) -->
             <div class="awb-field-wrap">
               <label class="awb-label font-serif">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px; margin-right:4px;">
@@ -122,29 +139,22 @@ import { Alert } from '../../utils/alert.utils';
                 </svg>
                 AWB / TRACKING ID:
               </label>
-              <div class="awb-input-container">
+              <div class="awb-input-group">
                 <input 
                   type="text" 
                   class="awb-input" 
+                  [disabled]="order.status !== 'SHIPPED'"
                   [(ngModel)]="order.trackingId" 
-                  placeholder="Enter AWB / Tracking number (e.g. AWB987452103IN)..." 
+                  placeholder="{{ order.status === 'SHIPPED' ? 'Enter AWB / Tracking number...' : 'Status must be SHIPPED to enter AWB' }}" 
                 />
+                <button 
+                  (click)="saveAwb(order)" 
+                  [disabled]="order.status !== 'SHIPPED' || order._saving" 
+                  class="luxury-btn-primary save-awb-btn"
+                >
+                  {{ order._saving ? 'SAVING...' : 'SAVE AWB' }}
+                </button>
               </div>
-            </div>
-
-            <div class="status-select-wrap">
-              <label class="awb-label font-serif">UPDATE STATUS:</label>
-              <select [(ngModel)]="order.status" (change)="saveTracking(order)" class="status-select">
-                <option value="PENDING">PENDING</option>
-                <option value="PROCESSING">PROCESSING</option>
-                <option value="SHIPPED">SHIPPED</option>
-                <option value="DELIVERED">DELIVERED</option>
-                <option value="CANCELLED">CANCELLED</option>
-              </select>
-
-              <button (click)="saveTracking(order)" [disabled]="order._saving" class="luxury-btn-primary save-status-btn">
-                {{ order._saving ? 'SAVING...' : 'SAVE & UPDATE' }}
-              </button>
             </div>
           </div>
 
@@ -422,14 +432,16 @@ import { Alert } from '../../utils/alert.utils';
       font-weight: 600;
     }
 
-    .awb-input-container {
-      position: relative;
+    .awb-input-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       flex-grow: 1;
       max-width: 450px;
     }
 
     .awb-input {
-      width: 100%;
+      flex: 1;
       background: #000;
       border: 1px solid var(--color-border-glow);
       color: #fff;
@@ -441,9 +453,29 @@ import { Alert } from '../../utils/alert.utils';
       transition: var(--transition-smooth);
     }
 
-    .awb-input:focus {
+    .awb-input:disabled {
+      background: rgba(255, 255, 255, 0.03);
+      border-color: rgba(255, 255, 255, 0.1);
+      color: #666;
+      cursor: not-allowed;
+    }
+
+    .awb-input:focus:not(:disabled) {
       border-color: var(--color-gold-primary);
-      box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    }
+
+    .save-awb-btn {
+      padding: 10px 18px;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    .save-awb-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
     }
 
     .awb-status-text {
@@ -577,23 +609,13 @@ export class AdminOrdersComponent implements OnInit {
   loadOrders() {
     this.ecommerceService.fetchAllOrders().subscribe({
       next: (data) => {
-        const dbList = data || [];
-        const dummyList = this.createDummyOrders();
-
-        const combinedMap = new Map<string, any>();
-        dummyList.forEach(d => combinedMap.set(d.id, d));
-        dbList.forEach(d => combinedMap.set(d.id, d));
-
-        let list = Array.from(combinedMap.values());
-        list = this.applyLocalOverrides(list);
+        const list = this.applyLocalOverrides(data || []);
         this.orders.set(list);
         this.filteredOrders.set(list);
       },
       error: () => {
-        let list = this.createDummyOrders();
-        list = this.applyLocalOverrides(list);
-        this.orders.set(list);
-        this.filteredOrders.set(list);
+        this.orders.set([]);
+        this.filteredOrders.set([]);
       }
     });
   }
@@ -664,45 +686,74 @@ export class AdminOrdersComponent implements OnInit {
     this.filteredOrders.set(filtered);
   }
 
-  saveTracking(order: any) {
-    order._saving = true;
-    order._saved = false;
-
+  onStatusChange(order: any, newStatus: string) {
+    if (order.status === newStatus) return;
+    order.status = newStatus;
+    
     if (order.status === 'SHIPPED') {
       order.shippedAt = order.shippedAt || new Date().toISOString();
       order.expectedDeliveryDate = new Date(new Date(order.shippedAt).getTime() + 5 * 24 * 60 * 60 * 1000).toISOString();
     }
 
-    // Persist to local overrides instantly
     this.saveLocalOverride(order);
 
-    const onComplete = () => {
-      order._saving = false;
-      order._saved = true;
-
-      const trackingText = order.trackingId ? `AWB #: ${order.trackingId}` : 'No AWB attached';
-      const statusText = `Status: ${order.status}`;
-
-      Alert.success(
-        'Order Updated & Saved!',
-        `Order #${order.orderNumber} saved successfully.\n\n${statusText}\n${trackingText}${order.status === 'SHIPPED' ? '\n\nClient notified to pay 80% balance within 24 hours.' : ''}`
-      );
-    };
-
-    if (order.id && !order.id.startsWith('dummy-')) {
-      this.ecommerceService.updateOrderTracking(order.id, order.trackingId || '', order.status).subscribe({
+    if (order.id) {
+      this.ecommerceService.updateOrderTracking(
+        order.id, 
+        order.trackingId || '', 
+        order.status, 
+        undefined, 
+        order.expectedDeliveryDate, 
+        order.shippedAt,
+        order.orderNumber
+      ).subscribe({
         next: (res) => {
-          if (res) {
-            order.shippedAt = res.shippedAt || order.shippedAt;
-            order.expectedDeliveryDate = res.expectedDeliveryDate || order.expectedDeliveryDate;
-          }
-          onComplete();
+          console.log('[SUCCESS] Status updated in DB:', res);
+          Alert.success('Status Updated!', `Order #${order.orderNumber} status updated to ${order.status}.`);
         },
-        error: () => onComplete()
+        error: (err) => {
+          console.error('[ERROR] Failed to update status in DB:', err);
+          const errDetail = err?.status === 0 ? 'CORS / Network Error (PATCH method not allowed or server down)' : (err?.error?.error || err?.message || JSON.stringify(err));
+          Alert.error('Status Update Failed!', `Could not save status to database: ${errDetail}`);
+        }
       });
-    } else {
-      setTimeout(() => onComplete(), 200);
     }
+  }
+
+  saveAwb(order: any) {
+    if (!order.trackingId || !order.trackingId.trim()) {
+      Alert.warning('AWB Number Required', 'Please enter a valid AWB / Tracking ID before saving.');
+      return;
+    }
+
+    order._saving = true;
+    this.saveLocalOverride(order);
+
+    this.ecommerceService.updateOrderTracking(
+      order.id, 
+      order.trackingId.trim(), 
+      order.status, 
+      undefined, 
+      order.expectedDeliveryDate, 
+      order.shippedAt,
+      order.orderNumber
+    ).subscribe({
+      next: (res) => {
+        order._saving = false;
+        console.log('[SUCCESS] AWB saved in DB:', res);
+        Alert.success('AWB Saved!', `AWB Tracking ID ${order.trackingId} saved for Order #${order.orderNumber}.`);
+      },
+      error: (err) => {
+        order._saving = false;
+        console.error('[ERROR] Failed to save AWB in DB:', err);
+        const errDetail = err?.status === 0 ? 'CORS / Network Error (PATCH method not allowed or server down)' : (err?.error?.error || err?.message || JSON.stringify(err));
+        Alert.error('AWB Save Failed!', `Could not save AWB to database: ${errDetail}`);
+      }
+    });
+  }
+
+  saveTracking(order: any) {
+    this.saveAwb(order);
   }
 
   private createDummyOrders() {
