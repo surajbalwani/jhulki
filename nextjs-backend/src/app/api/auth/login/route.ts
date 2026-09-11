@@ -58,8 +58,9 @@ export async function POST(req: NextRequest) {
       { status: 200, headers: corsHeaders() }
     );
   } catch (error: any) {
+    console.error('Login Route Error:', error);
     return NextResponse.json(
-      { error: error?.message || 'Login failed.' },
+      { error: error?.message || 'Login failed.', details: String(error) },
       { status: 500, headers: corsHeaders() }
     );
   }

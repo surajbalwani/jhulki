@@ -197,7 +197,14 @@ export class AuthComponent {
         },
         error: (err) => {
           this.loading.set(false);
-          Alert.error('Authentication Failed', err?.error?.error || 'Invalid credentials. Please try again.');
+          if (typeof err?.error === 'string' && err.error.includes('<!doctype')) {
+            Alert.error(
+              'Backend API URL Required',
+              'The live website is trying to hit frontend instead of Next.js API. Please click "⚡ Config API Endpoint" at the bottom of the page and enter your Next.js Vercel Backend URL.'
+            );
+          } else {
+            Alert.error('Authentication Failed', err?.error?.error || 'Invalid credentials. Please check your email/password or API URL.');
+          }
         }
       });
     } else {
@@ -219,7 +226,14 @@ export class AuthComponent {
         },
         error: (err) => {
           this.loading.set(false);
-          Alert.error('Registration Failed', err?.error?.error || 'Signup failed');
+          if (typeof err?.error === 'string' && err.error.includes('<!doctype')) {
+            Alert.error(
+              'Backend API URL Required',
+              'The live website is trying to hit frontend instead of Next.js API. Please click "⚡ Config API Endpoint" at the bottom of the page and enter your Next.js Vercel Backend URL.'
+            );
+          } else {
+            Alert.error('Registration Failed', err?.error?.error || 'Signup failed');
+          }
         }
       });
     }
