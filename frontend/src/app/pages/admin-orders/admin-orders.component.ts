@@ -126,12 +126,8 @@ import { Order } from '../../models/ecommerce.model';
                   type="text" 
                   class="awb-input" 
                   [(ngModel)]="order.trackingId" 
-                  (blur)="saveTracking(order)" 
-                  (keyup.enter)="saveTracking(order)" 
-                  placeholder="Enter courier AWB number (e.g. AWB987452103IN)..." 
+                  placeholder="Enter AWB / Tracking number (e.g. AWB987452103IN)..." 
                 />
-                <span *ngIf="order._saving" class="awb-status-text saving">Saving...</span>
-                <span *ngIf="order._saved" class="awb-status-text saved font-serif">✓ Saved & Updated</span>
               </div>
             </div>
 
@@ -144,11 +140,15 @@ import { Order } from '../../models/ecommerce.model';
                 <option value="DELIVERED">DELIVERED</option>
                 <option value="CANCELLED">CANCELLED</option>
               </select>
+
+              <button (click)="saveTracking(order)" [disabled]="order._saving" class="luxury-btn-primary save-status-btn">
+                {{ order._saving ? 'SAVING...' : 'SAVE & UPDATE' }}
+              </button>
             </div>
           </div>
 
           <!-- Email Notification Sent Banner -->
-          <div class="email-sent-banner mt-3" *ngIf="order._emailSent || order.status === 'SHIPPED'">
+          <div class="email-sent-banner mt-3" *ngIf="order.status === 'SHIPPED'">
             <span>📧 <strong>Automated Client Dispatch Email Active:</strong> Client ({{ order.shippingName }}) notified with Delhivery AWB #{{ order.trackingId || 'AWB-PENDING' }}. Client requested to pay 80% balance (₹{{ getBalanceDue(order) | number:'1.2-2' }}) within 24 hours.</span>
           </div>
         </div>
@@ -576,7 +576,14 @@ export class AdminOrdersComponent implements OnInit {
   loadOrders() {
     this.ecommerceService.fetchAllOrders().subscribe({
       next: (data) => {
-        let list = data && data.length > 0 ? data : this.createDummyOrders();
+        const dbList = data || [];
+        const dummyList = this.createDummyOrders();
+
+        const combinedMap = new Map<string, any>();
+        dummyList.forEach(d => combinedMap.set(d.id, d));
+        dbList.forEach(d => combinedMap.set(d.id, d));
+
+        let list = Array.from(combinedMap.values());
         list = this.applyLocalOverrides(list);
         this.orders.set(list);
         this.filteredOrders.set(list);
@@ -659,22 +666,26 @@ export class AdminOrdersComponent implements OnInit {
   saveTracking(order: any) {
     order._saving = true;
     order._saved = false;
-    order._emailSent = false;
 
     if (order.status === 'SHIPPED') {
-      order.shippedAt = new Date().toISOString();
-      order.expectedDeliveryDate = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString();
+      order.shippedAt = order.shippedAt || new Date().toISOString();
+      order.expectedDeliveryDate = new Date(new Date(order.shippedAt).getTime() + 5 * 24 * 60 * 60 * 1000).toISOString();
     }
+
+    // Persist to local overrides instantly
+    this.saveLocalOverride(order);
 
     const onComplete = () => {
       order._saving = false;
       order._saved = true;
-      if (order.status === 'SHIPPED' && order.trackingId) {
-        order._emailSent = true;
-        setTimeout(() => order._emailSent = false, 8000);
-      }
-      this.saveLocalOverride(order);
-      setTimeout(() => order._saved = false, 2500);
+
+      const trackingText = order.trackingId ? `AWB #: ${order.trackingId}` : 'No AWB attached';
+      const statusText = `Status: ${order.status}`;
+
+      Alert.success(
+        'Order Updated & Saved!',
+        `Order #${order.orderNumber} saved successfully.\n\n${statusText}\n${trackingText}${order.status === 'SHIPPED' ? '\n\nClient notified to pay 80% balance within 24 hours.' : ''}`
+      );
     };
 
     if (order.id && !order.id.startsWith('dummy-')) {
@@ -689,7 +700,7 @@ export class AdminOrdersComponent implements OnInit {
         error: () => onComplete()
       });
     } else {
-      setTimeout(() => onComplete(), 300);
+      setTimeout(() => onComplete(), 200);
     }
   }
 
