@@ -429,12 +429,8 @@ export class TrackOrderComponent implements OnInit {
   }
 
   getDisplayOrders() {
-    const orders = this.ecommerceService.orders();
-    if (orders && orders.length > 0) return orders;
-
-    // Fallback demo order with live AWB tracking for test preview
-    const u = this.authService.getUser();
-    return [
+    const dbOrders = this.ecommerceService.orders();
+    let orders = dbOrders && dbOrders.length > 0 ? dbOrders : [
       {
         id: 'demo-cust-order',
         orderNumber: 'JHL-894102',
@@ -446,7 +442,7 @@ export class TrackOrderComponent implements OnInit {
         isBalancePaid: false,
         status: 'SHIPPED' as const,
         trackingId: 'AWB984712049IN',
-        shippingName: u?.fullName || 'Sophia Laurent',
+        shippingName: this.authService.getUser()?.fullName || 'Sophia Laurent',
         shippingStreet: '14 Marine Drive Luxury Tower',
         shippingCity: 'Mumbai',
         shippingState: 'Maharashtra',
@@ -468,6 +464,28 @@ export class TrackOrderComponent implements OnInit {
         ]
       }
     ];
+
+    const raw = localStorage.getItem('jhulki_admin_orders_overrides');
+    if (raw) {
+      try {
+        const overrides: Record<string, any> = JSON.parse(raw);
+        orders = orders.map(o => {
+          const ov = overrides[o.id] || overrides[o.orderNumber];
+          if (ov) {
+            return {
+              ...o,
+              trackingId: ov.trackingId !== undefined ? ov.trackingId : o.trackingId,
+              status: ov.status !== undefined ? ov.status : o.status,
+              shippedAt: ov.shippedAt !== undefined ? ov.shippedAt : o.shippedAt,
+              expectedDeliveryDate: ov.expectedDeliveryDate !== undefined ? ov.expectedDeliveryDate : o.expectedDeliveryDate
+            };
+          }
+          return o;
+        });
+      } catch (e) {}
+    }
+
+    return orders;
   }
 
   getExpectedDeliveryDate(order: any): string {

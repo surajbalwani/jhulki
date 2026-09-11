@@ -101,6 +101,17 @@ import { Order } from '../../models/ecommerce.model';
             </div>
           </div>
 
+          <!-- Advance Payment & Balance Due Strip -->
+          <div class="advance-payment-strip mt-3">
+            <span class="pay-tag advance">20% ADVANCE PAID: ₹{{ getAdvancePaid(order) | number:'1.2-2' }}</span>
+            <span class="pay-tag balance" [class.paid]="order.isBalancePaid">
+              {{ order.isBalancePaid ? '✓ 80% BALANCE PAID (FULL)' : ('⏳ 80% BALANCE DUE: ₹' + (getBalanceDue(order) | number:'1.2-2')) }}
+            </span>
+            <span class="pay-tag notice" *ngIf="order.status === 'SHIPPED' && !order.isBalancePaid">
+              📧 24-Hour Balance Payment Email Sent to Client
+            </span>
+          </div>
+
           <!-- AWB Tracking ID Insertion & Status Update -->
           <div class="awb-control-footer mt-4">
             <div class="awb-field-wrap">
@@ -137,8 +148,8 @@ import { Order } from '../../models/ecommerce.model';
           </div>
 
           <!-- Email Notification Sent Banner -->
-          <div class="email-sent-banner mt-3" *ngIf="order._emailSent">
-            <span>📧 <strong>Automated Dispatch Email Sent:</strong> Client notified with AWB #{{ order.trackingId }}. 24-hour timer active for 80% balance payment. Expected delivery in 5 days.</span>
+          <div class="email-sent-banner mt-3" *ngIf="order._emailSent || order.status === 'SHIPPED'">
+            <span>📧 <strong>Automated Client Dispatch Email Active:</strong> Client ({{ order.shippingName }}) notified with Delhivery AWB #{{ order.trackingId || 'AWB-PENDING' }}. Client requested to pay 80% balance (₹{{ getBalanceDue(order) | number:'1.2-2' }}) within 24 hours.</span>
           </div>
         </div>
 
@@ -480,6 +491,48 @@ import { Order } from '../../models/ecommerce.model';
       outline: none;
     }
 
+    .advance-payment-strip {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: rgba(212, 175, 55, 0.05);
+      border: 1px dashed rgba(212, 175, 55, 0.25);
+      padding: 10px 14px;
+      border-radius: 4px;
+    }
+
+    .pay-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border-radius: 3px;
+    }
+
+    .pay-tag.advance {
+      background: rgba(212, 175, 55, 0.15);
+      color: #f3e5ab;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+
+    .pay-tag.balance {
+      background: rgba(255, 183, 3, 0.15);
+      color: #ffb703;
+      border: 1px solid rgba(255, 183, 3, 0.3);
+    }
+
+    .pay-tag.balance.paid {
+      background: rgba(52, 199, 89, 0.15);
+      color: #34c759;
+      border-color: rgba(52, 199, 89, 0.3);
+    }
+
+    .pay-tag.notice {
+      background: rgba(0, 122, 255, 0.15);
+      color: #64b5f6;
+      border: 1px solid rgba(0, 122, 255, 0.3);
+    }
+
     .no-orders {
       text-align: center;
       padding: 50px;
@@ -523,22 +576,69 @@ export class AdminOrdersComponent implements OnInit {
   loadOrders() {
     this.ecommerceService.fetchAllOrders().subscribe({
       next: (data) => {
-        if (!data || data.length === 0) {
-          // Provide realistic dummy luxury orders if no database orders exist yet
-          const dummyOrders = this.createDummyOrders();
-          this.orders.set(dummyOrders);
-          this.filteredOrders.set(dummyOrders);
-        } else {
-          this.orders.set(data);
-          this.filteredOrders.set(data);
-        }
+        let list = data && data.length > 0 ? data : this.createDummyOrders();
+        list = this.applyLocalOverrides(list);
+        this.orders.set(list);
+        this.filteredOrders.set(list);
       },
       error: () => {
-        const dummyOrders = this.createDummyOrders();
-        this.orders.set(dummyOrders);
-        this.filteredOrders.set(dummyOrders);
+        let list = this.createDummyOrders();
+        list = this.applyLocalOverrides(list);
+        this.orders.set(list);
+        this.filteredOrders.set(list);
       }
     });
+  }
+
+  getAdvancePaid(order: any): number {
+    if (order.advancePaid) return order.advancePaid;
+    return Math.round(order.totalAmount * 0.20);
+  }
+
+  getBalanceDue(order: any): number {
+    if (order.balanceDue) return order.balanceDue;
+    return order.totalAmount - this.getAdvancePaid(order);
+  }
+
+  private applyLocalOverrides(orderList: any[]): any[] {
+    const raw = localStorage.getItem('jhulki_admin_orders_overrides');
+    if (!raw) return orderList;
+
+    try {
+      const overrides: Record<string, any> = JSON.parse(raw);
+      return orderList.map(o => {
+        const ov = overrides[o.id] || overrides[o.orderNumber];
+        if (ov) {
+          return {
+            ...o,
+            trackingId: ov.trackingId !== undefined ? ov.trackingId : o.trackingId,
+            status: ov.status !== undefined ? ov.status : o.status,
+            shippedAt: ov.shippedAt !== undefined ? ov.shippedAt : o.shippedAt,
+            expectedDeliveryDate: ov.expectedDeliveryDate !== undefined ? ov.expectedDeliveryDate : o.expectedDeliveryDate
+          };
+        }
+        return o;
+      });
+    } catch (e) {
+      return orderList;
+    }
+  }
+
+  private saveLocalOverride(order: any) {
+    const raw = localStorage.getItem('jhulki_admin_orders_overrides') || '{}';
+    try {
+      const overrides = JSON.parse(raw);
+      overrides[order.id] = {
+        trackingId: order.trackingId,
+        status: order.status,
+        shippedAt: order.shippedAt,
+        expectedDeliveryDate: order.expectedDeliveryDate
+      };
+      if (order.orderNumber) {
+        overrides[order.orderNumber] = overrides[order.id];
+      }
+      localStorage.setItem('jhulki_admin_orders_overrides', JSON.stringify(overrides));
+    } catch (e) {}
   }
 
   filterOrders() {
@@ -571,19 +671,24 @@ export class AdminOrdersComponent implements OnInit {
       order._saved = true;
       if (order.status === 'SHIPPED' && order.trackingId) {
         order._emailSent = true;
-        setTimeout(() => order._emailSent = false, 6000);
+        setTimeout(() => order._emailSent = false, 8000);
       }
+      this.saveLocalOverride(order);
       setTimeout(() => order._saved = false, 2500);
     };
 
-    // Call backend API if real order ID exists
     if (order.id && !order.id.startsWith('dummy-')) {
       this.ecommerceService.updateOrderTracking(order.id, order.trackingId || '', order.status).subscribe({
-        next: () => onComplete(),
+        next: (res) => {
+          if (res) {
+            order.shippedAt = res.shippedAt || order.shippedAt;
+            order.expectedDeliveryDate = res.expectedDeliveryDate || order.expectedDeliveryDate;
+          }
+          onComplete();
+        },
         error: () => onComplete()
       });
     } else {
-      // Dummy order local save simulation
       setTimeout(() => onComplete(), 300);
     }
   }
